@@ -2,35 +2,14 @@
    Loaded only when the resolved appearance is dark (manual or system).
    This keeps every component rule in sync with the selected theme. */
 /* Night forest surfaces with lavender accent and semantic status colors. */
-html[data-theme="dark"] {
-  color-scheme: dark;
-  --bg-primary: #111814;
-  --bg-surface: #17211B;
-  --bg-elevated: #202B24;
-  --bg-raised: #29352E;
-  --text-primary: #E2E8E3;
-  --text-secondary: #B8C0BA;
-  --text-muted: #9EA7A1;
-  --accent: #B4AFEE;
-  --accent-strong: #C1BBFC;
-  --accent-soft: rgba(180,175,238,.12);
-  --accent-border: rgba(180,175,238,.55);
-  --accent-shadow: rgba(180,175,238,.18);
-  --primary: #B4AFEE;
-  --on-accent: #0C1711;
-  --success: #88D1A2;
-  --success-bg: rgba(136,209,162,.15);
-  --warning: #E2C479;
-  --warning-bg: rgba(226,196,121,.14);
-  --danger: #F08695;
-  --danger-bg: rgba(240,134,149,.14);
-  --neutral-chip: #A2B1B8;
-  --border: #2F3933;
-  --record-bg: #B4233C;
-  --record-bg-hover: #951B31;
-  --record-border: #951B31;
-  --record-disabled-bg: #7E1B2F;
-  --record-text: #FFFFFF;
+html[data-theme="dark"]{
+ color-scheme:dark;--bg-primary:#0E1513;--bg-surface:#151E1B;--bg-elevated:#1D2824;--bg-raised:#26332E;--border:#2E3B36;
+ --text-primary:#E7EEEA;--text-secondary:#B5C0BB;--text-muted:#8E9A95;--accent:#4FC3B2;--accent-strong:#7BDDCF;
+ --accent-soft:rgba(79,195,178,.14);--accent-border:rgba(79,195,178,.50);--on-accent:#04201C;--primary:var(--accent);
+ --success:#6FCF97;--success-bg:rgba(111,207,151,.15);--warning:#E6B85C;--warning-bg:rgba(230,184,92,.14);
+ --danger:#F2878A;--danger-bg:rgba(242,135,138,.14);--neutral-chip:#9FB0B8;
+ --record-bg:#C9353F;--record-bg-hover:#AE2B34;--record-border:#AE2B34;--record-text:#FFFFFF;--record-disabled-bg:#6E2A30;
+ --shadow-sm:none;--shadow-md:none;
 }
 html, body { background: var(--bg-primary); color: var(--text-primary); }
 body {
@@ -318,5 +297,37 @@ html[data-theme="dark"]:has(.shadowing-page),
 html[data-theme="dark"]:has(.shadowing-page) body,
 html[data-theme="dark"]:has(.shadowing-page) #app,
 html[data-theme="dark"]:has(.shadowing-page) .view-container {
-  background: #10251c !important;
+  background: var(--bg-primary) !important;
 }
+
+
+/* Calm Lagoon hierarchy and accessible mobile rhythm */
+body{font-family:var(--font-sans);font-size:15px;background:var(--bg-primary);color:var(--text-primary)}
+.view-container{padding:16px;gap:16px}.card,.ielts-library-card,.shadowing-main-card{border-radius:var(--radius-lg)}
+.card-title{font-size:17px;font-weight:700}.card-subtitle,.form-label,.form-field label{font-size:13px}
+button,select,input,textarea,.nav-btn{min-height:48px}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--accent-border);outline-offset:3px}
+.btn-primary,.pill-btn.active{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}.btn-primary:hover{background:var(--accent-strong)}
+.btn-secondary{background:var(--bg-raised);color:var(--text-primary);border-color:var(--border)}
+.bottom-nav{background:var(--bg-surface);border:0;border-top:1px solid var(--border);box-shadow:none}
+.nav-btn{color:var(--text-secondary)}.nav-btn.active{color:var(--accent);background:var(--accent-soft)}
+.shadowing-page .page-heading{border:0;padding-bottom:0;margin-bottom:2px}.shadowing-page .sh-provider-notice,.shadowing-page .sh-scoring-status{display:none}
+.sh-context-sheet{margin:0 0 4px}.sh-context-summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:8px 14px;border-radius:var(--radius-md);background:var(--bg-elevated);color:var(--text-primary);cursor:pointer}
+.sh-context-summary::-webkit-details-marker{display:none}.sh-context-values{font-size:14px;font-weight:650}.sh-context-action{color:var(--accent);font-size:13px;font-weight:700}
+.sh-context-sheet[open]{padding:0 12px 12px;border-radius:var(--radius-lg);background:var(--bg-surface);border:1px solid var(--border)}
+.sh-context-sheet[open] .sh-context-summary{margin:0 -12px 12px;border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+.shadowing-page .sh-sentence-set-details{margin:0}.shadowing-page .sentence-box{padding:22px 18px;border:0;background:var(--bg-surface);border-radius:var(--radius-lg)}
+.shadowing-page #sh-target-text{font-size:22px;line-height:1.5;font-weight:600}
+.shadowing-page .sh-result-strip,.shadowing-page .sh-score-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px}
+.shadowing-page .sh-api-notice-toggle{width:40px;min-width:40px;min-height:40px;border-radius:50%;padding:0;margin:0}
+.ielts-library-page .page-heading{border:0;padding:0;margin-bottom:12px}.ielts-library-page .ielts-set-mode-row{margin:10px 0 14px}
+.ielts-library-page .ielts-set-status{display:none}.ielts-generation-sheet>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.ielts-generation-sheet>summary::-webkit-details-marker{display:none}.ielts-generation-sheet-content{padding:12px 0}
+.ielts-generation-sheet:not([open]) .ielts-generation-sheet-content{display:none}.ielts-topic-sheet-content{border-top:1px solid var(--border)}
+.ielts-timer-clock{font-variant-numeric:tabular-nums;font-size:40px}.ielts-timer-clock.recording{color:var(--record-bg)}
+.ielts-cue-card{border-radius:var(--radius-lg);background:var(--bg-surface);border:1px solid var(--border);padding:20px}
+.settings-accordion{border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent}
+.ielts-history-record{border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent;padding:14px 2px}
+@media(max-width:390px){.view-container{padding:12px;gap:12px}.shadowing-page #sh-target-text{font-size:20px}}
+
+@media(prefers-color-scheme:dark){html:not([data-theme="light"]){color-scheme:dark}}

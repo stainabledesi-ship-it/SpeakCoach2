@@ -538,12 +538,14 @@ export function renderShadowingView(
         <div class="page-heading-title">
           <h1 class="card-title shadowing-page-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v3m-4 0h8"/></svg>Shadowing Trainer</h1>
         </div>
-        <span class="tier-badge ${scoringTier.label === 'Online AI' ? 'online' : 'offline'}">
+        <span class="tier-badge sh-scoring-status ${scoringTier.label === 'Online AI' ? 'online' : 'offline'}">
           <span class="tier-dot"></span>
           ${scoringTier.label}
         </span>
       </div>
       ${ttsTier.reason ? `<p class="sh-provider-notice" role="status">Voice: <strong>${escapeHtml(ttsTier.label)}</strong> · ${escapeHtml(ttsTier.reason)}</p>` : ''}
+      <details class="sh-context-sheet">
+        <summary class="sh-context-summary"><span class="sh-context-values">${escapeHtml(selectedLanguage.nativeName)} · ${state.difficulty[0].toUpperCase()+state.difficulty.slice(1)} · ${activeSet ? activeHistory.sets.findIndex(set => set.id === activeSet.id)+1 : 0} / ${activeHistory.sets.length}</span><span class="sh-context-action">Change</span></summary>
       <div class="sh-language-picker-field">
         <label class="sh-language-picker-label" for="sh-language-select">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
@@ -584,6 +586,7 @@ export function renderShadowingView(
         ${state.aiGenerationError ? `<div class="status-box fail ai-generation-error" id="sh-ai-generation-error" role="alert">${escapeHtml(state.aiGenerationError)}</div>` : ''}
       </div>
       </section>
+      </details>
 
       
       ${!hasLanguageSentenceSet ? `<div class="status-box info sh-empty-language-history" role="status">There are no saved ${escapeHtml(selectedLanguage.label)} sentences yet. Generate a sentence set in this language to begin. Your English sentence history remains separate. <button type="button" class="btn btn-primary" id="sh-empty-generate-btn">Generate now</button></div>` : ''}
@@ -689,7 +692,7 @@ export function renderShadowingView(
         <p>For custom OpenAI-compatible APIs, enter the exact model name supported by your gateway. The suggested model list is only a convenience, not a restriction. Your gateway must expose the matching <code>/audio/speech</code> or <code>/audio/transcriptions</code> endpoint.</p>
         <button type="button" class="btn btn-secondary sh-api-notice-dismiss" id="sh-api-notice-dismiss-btn">I understand</button>
       </details>
-      <button type="button" class="btn btn-secondary sh-api-notice-toggle" id="sh-api-notice-toggle-btn" aria-controls="sh-api-capability-notice">ⓘ Troubleshooting</button>
+      <button type="button" class="btn btn-secondary sh-api-notice-toggle" aria-label="Speech help" title="Speech help" id="sh-api-notice-toggle-btn" aria-controls="sh-api-capability-notice">?</button>
   `;
 
   if (isCaptureBusy) {

@@ -235,7 +235,7 @@ export function renderIeltsView(
             <div class="ielts-set-title">${escapeHtml(set.title)}</div>
             <div class="ielts-set-meta">${set.plan.part1Questions.length} Part 1 prompts · 1 cue card · ${set.plan.part3Questions.length} Part 3 prompts</div>
           </div>
-          <span class="ielts-set-status ${set.status}">${set.status === 'completed' ? 'Completed' : 'Ready'}</span>
+          
           <button type="button" class="btn btn-primary ielts-set-start" data-start-set="${escapeHtml(set.id)}">Start practice</button>
         </article>
       `).join('');
@@ -246,7 +246,7 @@ export function renderIeltsView(
             <div class="page-heading-title">
               <h1 class="card-title">IELTS Speaking</h1>
             </div>
-            <span class="tier-badge ${tierBadge}"><span class="tier-dot"></span>${summary.slots.llm_evaluator.tier === 3 ? 'API required' : 'Online AI'}</span>
+            
           </div>
 
           <div id="ielts-eval-warning-banner" class="ielts-evaluator-chip" style="display:${evaluatorWarningText ? 'flex' : 'none'};">
@@ -277,7 +277,10 @@ ${summary.slots.llm_evaluator.tier === 3 ? `<div class="status-box info" role="s
               <p class="card-subtitle">${sets.length} available · ${allSets.filter((set) => set.status === 'completed').length} completed in history</p>
             </div>
             <div class="ielts-library-actions">
-              <button type="button" class="btn btn-secondary" id="ielts-restore-sets-btn" ${getPreviousIeltsQuestionSetGenerationCount() === 0 || isRegeneratingQuestions ? 'disabled' : ''}>Restore previous sets</button>
+              <details class="ielts-generation-sheet">
+                <summary class="btn btn-secondary">New sets</summary>
+                <div class="ielts-generation-sheet-content"><button type="button" class="btn btn-secondary" id="ielts-restore-sets-btn" ${getPreviousIeltsQuestionSetGenerationCount() === 0 || isRegeneratingQuestions ? 'disabled' : ''}>Restore previous sets</button></div>
+              </details>
             </div>
           </div>
           <div class="form-field ielts-topic-field">
