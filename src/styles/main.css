@@ -4508,3 +4508,6 @@ button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-
 .ielts-history-more { margin:6px 0; }
 .ielts-history-more > summary { min-height:40px; display:flex; align-items:center; color:var(--text-secondary); font-size:12px; cursor:pointer; }
 .ielts-history-more[open] > summary { color:var(--accent); }
+
+.shadowing-page:has(.sh-empty-language-history) .sh-api-notice-toggle,
+.shadowing-page:has(.sh-empty-language-history) .shadowing-offline-notice { display:none !important; }
