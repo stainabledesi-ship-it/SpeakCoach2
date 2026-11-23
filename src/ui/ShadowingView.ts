@@ -337,17 +337,9 @@ function renderReportHtml(report: ShadowingScoreReport, hasRecording: boolean, d
     <div id="sh-score-card" class="sh-score-card">
       <div class="sh-score-heading section-heading">
         <div>
-          <h2 class="card-title">Shadowing Score Report</h2>
-          <p class="card-subtitle">
-            Scored via <strong>${escapeHtml(report.activeTier.detailLabel)}</strong> · Overall Pace: <strong>${Math.round(
-              report.overallPaceRatio * 100
-            )}% (${report.overallPaceLabel})</strong>
-          </p>
+          <h2 class="card-title">Practice results</h2>
+          <p class="card-subtitle">Overall pace: <strong>${Math.round(report.overallPaceRatio * 100)}% · ${report.overallPaceLabel}</strong></p>
         </div>
-        <span class="tier-badge ${report.activeTier.label === 'Online AI' ? 'online' : 'offline'}">
-          <span class="tier-dot"></span>
-          ${report.activeTier.label}
-        </span>
       </div>
 
       ${
