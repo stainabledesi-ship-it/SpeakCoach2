@@ -4316,7 +4316,6 @@ body {
 
 
 /* ── Calm Lagoon: declutter pass ─────────────────────────────────────── */
-:root { --font-sans: Inter, Vazirmatn, system-ui, sans-serif; }
 body { font-family: var(--font-sans); font-size: 15px; line-height: 1.5; }
 .view-container { padding: 16px; gap: 16px; }
 .card, .ielts-library-card, .shadowing-main-card { border-radius: var(--radius-lg); }
