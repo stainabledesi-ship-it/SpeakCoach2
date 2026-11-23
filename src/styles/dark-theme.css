@@ -11,12 +11,12 @@ html[data-theme="dark"] {
   --text-primary: #F0F1EF;
   --text-secondary: #C1C5C1;
   --text-muted: #969D99;
-  --accent: #E86622;
-  --accent-strong: #F47A32;
-  --accent-soft: rgba(232,102,34,.15);
-  --accent-border: rgba(232,102,34,.55);
-  --accent-shadow: rgba(232,102,34,.18);
-  --primary: #E86622;
+  --accent: #739B86;
+  --accent-strong: #86A995;
+  --accent-soft: rgba(115,155,134,.15);
+  --accent-border: rgba(115,155,134,.55);
+  --accent-shadow: rgba(115,155,134,.18);
+  --primary: #739B86;
   --on-accent: #17191C;
   --success: #A8C18B;
   --success-bg: rgba(168,193,139,.16);
