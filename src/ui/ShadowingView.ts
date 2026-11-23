@@ -250,6 +250,8 @@ function renderVadWaveformSection(vad?: WavVadAnalysisResult): string {
 
 function renderReportHtml(report: ShadowingScoreReport, hasRecording: boolean, drillMode = false, previousStatuses: Record<string, { status: WordMatchStatus; accuracyScore: number }> = {}, audioBusy = false, playbackActive = false, wordPlayback = false, weakActionHtml = ''): string {
   const isOfflineMode = report.activeTier.tier === 3 || report.activeTier.label === 'Basic offline';
+  const drillWords = report.words.filter(word => word.referenceWord);
+  const drillCorrect = drillWords.filter(word => word.status === 'match').length;
 
   const chipsHtml = report.words
     .map((w) => {
@@ -504,8 +506,6 @@ export function renderShadowingView(
         : 'None yet (starts empty on every attempt)';
 
   const drillMode = Boolean(state.customDrillText);
-  const drillWords = state.lastReport?.words.filter(word => word.referenceWord) ?? [];
-  const drillCorrect = drillWords.filter(word => word.status === 'match').length;
   const weakReferenceWords = [...new Set(state.lastReport?.words.filter(word => word.referenceWord && word.status !== 'match').map(word => word.referenceWord!) ?? [])];
   const remainingDrillWords = [...new Set(drillWords.filter(word => word.status !== 'match').map(word => word.referenceWord!).filter(Boolean))];
   const weakActionHtml = state.lastReport ? (drillMode
