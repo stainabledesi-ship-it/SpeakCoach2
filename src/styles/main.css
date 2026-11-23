@@ -4343,3 +4343,132 @@ button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-vis
 .settings-accordion{border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent}
 .ielts-history-record{border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent;padding:14px 2px}
 @media(max-width:390px){.view-container{padding:12px;gap:12px}.shadowing-page #sh-target-text{font-size:20px}}
+
+
+/* ── Calm Lagoon: declutter pass ─────────────────────────────────────── */
+:root { --font-sans: Inter, Vazirmatn, system-ui, sans-serif; }
+body { font-family: var(--font-sans); font-size: 15px; line-height: 1.5; }
+.view-container { padding: 16px; gap: 16px; }
+.card, .ielts-library-card, .shadowing-main-card { border-radius: var(--radius-lg); }
+.card-title, h1, h2, h3 { letter-spacing: normal; }
+.card-title { font-size: 17px; font-weight: 700; }
+button, select, input, textarea, summary, .nav-btn { min-height: 48px; }
+button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--accent-border); outline-offset: 3px;
+}
+.bottom-nav { background: var(--bg-surface); border: 0; border-top: 1px solid var(--border); box-shadow: none; }
+.nav-btn { color: var(--text-secondary); }
+.nav-btn.active { color: var(--accent); background: var(--accent-soft); }
+
+/* Shadowing: practice first, configuration second, one result surface. */
+.shadowing-page { display: flex; flex-direction: column; gap: 12px; }
+.shadowing-page .page-heading { order: 0; border: 0; padding: 0; margin: 0; }
+.shadowing-page .sh-provider-notice, .shadowing-page .sh-scoring-status { display: none !important; }
+.shadowing-page .sh-context-sheet { order: 1; margin: 0; }
+.shadowing-page .sh-sentence-set-details { margin: 0; }
+.shadowing-page .sh-sentence-set-heading, .shadowing-page .sh-set-guidance { display: none; }
+.sh-context-summary { list-style: none; display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:48px; padding:8px 14px; border-radius:var(--radius-md); background:var(--bg-elevated); color:var(--text-primary); cursor:pointer; }
+.sh-context-summary::-webkit-details-marker { display:none; }
+.sh-context-values { font-size:14px; font-weight:650; }
+.sh-context-action { color:var(--accent); font-size:13px; font-weight:700; }
+.sh-context-sheet[open] { padding:0 12px 12px; border-radius:var(--radius-lg); background:var(--bg-surface); border:1px solid var(--border); }
+.sh-context-sheet[open] .sh-context-summary { margin:0 -12px 12px; border-radius:var(--radius-lg) var(--radius-lg) 0 0; }
+.shadowing-page .shadowing-topic-label { order: 2; display:flex; justify-content:space-between; gap:8px; }
+.shadowing-page .sentence-box { order:3; padding:22px 18px; border:0; background:var(--bg-surface); border-radius:var(--radius-lg); }
+.shadowing-page #sh-target-text { font-size:22px; line-height:1.5; font-weight:600; overflow-wrap:anywhere; }
+.shadowing-page .sh-focus-copy { order:4; }
+.shadowing-page .sh-player-controls { order:5; display:flex; justify-content:center; align-items:center; gap:10px; }
+.shadowing-page .sh-play-main-btn { width:64px; height:64px; min-width:64px; border-radius:50%; }
+.shadowing-page .sh-player-icon-btn { min-width:48px; }
+.shadowing-page .sh-record-controls { order:6; }
+.shadowing-page .sh-record-action.btn-record { width:100%; min-height:58px; font-size:17px; font-weight:700; }
+.shadowing-page #sh-status-msg, .shadowing-page #sh-empty-error, .shadowing-page .sh-navigation-notice { order:7; margin:0; }
+.shadowing-page .sh-result-strip { display:none !important; }
+.shadowing-page .sh-score-card { background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px; }
+.shadowing-page .sh-score-heading { margin-bottom:12px; }
+.shadowing-page .score-metrics-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+.shadowing-page .metric-tile { min-width:0; padding:8px; background:var(--bg-elevated); border:0; border-radius:var(--radius-md); }
+.shadowing-page .metric-tile-overall { grid-column:span 4; background:var(--accent-soft); }
+.shadowing-page .metric-tile-overall .metric-value { color:var(--accent); font-size:40px; font-variant-numeric:tabular-nums; }
+.shadowing-page .word-tokens-wrap { display:flex; flex-wrap:wrap; gap:7px; }
+.shadowing-page .word-chip { min-height:42px; }
+.shadowing-page .sh-retry-weak-actions { margin:14px 0 4px; }
+.sh-translation-disclosure { order:9; border-top:1px solid var(--border); }
+.sh-translation-disclosure > summary { display:flex; align-items:center; min-height:52px; padding:8px 2px; color:var(--text-primary); font-weight:650; cursor:pointer; list-style:none; }
+.sh-translation-disclosure > summary::-webkit-details-marker { display:none; }
+.sh-translation-disclosure[open] > summary { color:var(--accent); }
+.sh-translation-card { margin:0; padding:14px 0; border:0; background:transparent; box-shadow:none; }
+.sh-api-capability-notice { order:10; }
+.sh-api-notice-toggle { position:absolute; top:8px; inset-inline-end:8px; width:40px; min-width:40px; min-height:40px; border-radius:50%; padding:0; }
+.shadowing-page:has(.sh-empty-language-history) .sh-context-sheet,
+.shadowing-page:has(.sh-empty-language-history) .shadowing-topic-label,
+.shadowing-page:has(.sh-empty-language-history) .sentence-box,
+.shadowing-page:has(.sh-empty-language-history) .sh-focus-copy,
+.shadowing-page:has(.sh-empty-language-history) .sh-player-controls,
+.shadowing-page:has(.sh-empty-language-history) .sh-record-controls,
+.shadowing-page:has(.sh-empty-language-history) #sh-status-msg,
+.shadowing-page:has(.sh-empty-language-history) .sh-result-details { display:none !important; }
+.sh-empty-language-history { padding:24px 18px; text-align:center; border:0; border-radius:var(--radius-lg); background:var(--bg-surface); color:var(--text-secondary); }
+.sh-empty-language-history #sh-empty-generate-btn { display:block; width:100%; margin-top:16px; }
+
+/* IELTS library: resume first, mode immediately before the set list. */
+.ielts-library-page { display:flex; flex-direction:column; gap:12px; }
+.ielts-library-page > .page-heading { order:0; }
+.ielts-library-page > #ielts-draft-banner { order:1; margin:0; }
+.ielts-library-page > #ielts-eval-warning-banner { order:2; }
+.ielts-library-page > .status-box, .ielts-library-page > .offline-quality-notice { order:2; }
+.ielts-library-page > .ielts-library-heading { order:3; margin:4px 0 0; }
+.ielts-library-page > .ielts-set-mode-row { order:4; display:block; margin:0; }
+.ielts-library-page > #ielts-set-list { order:5; }
+.ielts-library-page > #ielts-history-btn { order:6; align-self:flex-start; margin-top:8px; }
+.ielts-library-page .ielts-topic-field { min-width:0; padding:12px 0; border-top:1px solid var(--border); }
+.ielts-generation-sheet > summary { list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.ielts-generation-sheet > summary::-webkit-details-marker { display:none; }
+.ielts-generation-sheet-content { padding:12px 0; }
+.ielts-generation-sheet:not([open]) .ielts-generation-sheet-content { display:none; }
+.ielts-library-page .ielts-set-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; padding:12px 0; border:0; border-bottom:1px solid var(--border); border-radius:0; background:transparent; }
+.ielts-library-page .ielts-set-title { font-size:15px; }
+.ielts-library-page .ielts-set-meta { font-size:12px; }
+.ielts-library-page .ielts-set-start { min-width:104px; }
+.ielts-library-page .ielts-set-status { display:none; }
+.ielts-library-page:has(#ielts-eval-warning-banner[style*="flex"]) > .status-box,
+.ielts-library-page:has(#ielts-eval-warning-banner[style*="flex"]) > .offline-quality-notice { display:none !important; }
+.ielts-library-page:has(> .status-box) > .offline-quality-notice { display:none !important; }
+
+/* IELTS session: remove redundant source/provider chrome; focus on prompt and timer. */
+.ielts-session-topbar { display:grid; grid-template-columns:48px minmax(0,1fr) auto; align-items:center; gap:10px; min-height:52px; padding:0 2px 10px; border-bottom:1px solid var(--border); }
+.ielts-session-topbar strong { font-size:16px; font-weight:700; }
+.ielts-session-step-label { color:var(--text-muted); font-size:12px; }
+.ielts-session-close { width:48px; min-width:48px; height:48px; border:0; border-radius:50%; background:var(--bg-elevated); color:var(--text-primary); font-size:28px; cursor:pointer; }
+.ielts-source-row, .ielts-voice-tier-notice:not(.status-box) { display:none !important; }
+.ielts-timer-banner { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:22px 12px; border:0; background:var(--bg-elevated); border-radius:var(--radius-lg); }
+.ielts-timer-clock { font-size:40px; font-variant-numeric:tabular-nums; }
+.ielts-timer-clock.recording { color:var(--record-bg); }
+.ielts-cue-card { padding:20px; border:1px solid var(--border); border-radius:var(--radius-lg); background:var(--bg-surface); }
+.ielts-question-meta { display:flex; justify-content:space-between; align-items:center; margin:8px 0; }
+
+/* Compact settings, results and history without removing any actions. */
+.settings-accordion { border:0; border-bottom:1px solid var(--border); border-radius:0; background:transparent; }
+.settings-accordion-summary { min-height:64px; padding:12px 4px; }
+.settings-accordion-content { padding:12px 4px 20px; }
+.ielts-history-record { padding:14px 2px; border:0; border-bottom:1px solid var(--border); border-radius:0; background:transparent; }
+.ielts-history-record .ielts-history-criteria { gap:8px; }
+.ielts-history-record .ielts-history-actions { gap:8px; flex-wrap:wrap; }
+.ielts-band-hero { display:flex; align-items:center; gap:20px; padding:20px 0; border:0; background:transparent; }
+.ielts-band-number { color:var(--accent); font-size:40px; font-variant-numeric:tabular-nums; }
+.ielts-criteria-section, .ielts-result-section-spaced { border:0; border-top:1px solid var(--border); border-radius:0; background:transparent; padding:16px 0; }
+.ielts-result-section .ielts-result-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.ielts-result-section .ielts-result-actions .btn { flex:1 1 140px; }
+.ielts-result-section details { border-top:1px solid var(--border); padding:12px 0; }
+.ielts-result-section details > summary { min-height:48px; display:flex; align-items:center; font-weight:650; cursor:pointer; }
+.setup-dialog-inner { border-radius:var(--radius-lg); background:var(--bg-surface); color:var(--text-primary); }
+.setup-dialog-title { font-size:22px; }
+.diag-log-error, .diag-error-mono { overflow-wrap:anywhere; }
+@media (max-width:390px) {
+  .view-container { padding:12px; gap:12px; }
+  .shadowing-page #sh-target-text { font-size:20px; }
+  .shadowing-page .score-metrics-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .shadowing-page .metric-tile-overall { grid-column:span 2; }
+  .ielts-library-page .ielts-set-row { grid-template-columns:minmax(0,1fr); }
+  .ielts-library-page .ielts-set-start { width:100%; }
+}
