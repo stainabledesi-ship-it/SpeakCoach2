@@ -173,9 +173,9 @@ describe('Shadowing Trainer UI (Empty-By-Default Transcript, No Reference Fallba
 
     const retryWeakBtn = root.querySelector<HTMLButtonElement>('#sh-retry-weak-btn');
     expect(retryWeakBtn).not.toBeNull();
-    expect(retryWeakBtn?.closest('.sh-result-strip')).not.toBeNull();
+    expect(retryWeakBtn?.closest('#sh-score-card')).not.toBeNull();
     expect(retryWeakBtn?.closest('.sh-retry-weak-actions')).not.toBeNull();
-    expect(root.querySelector('#sh-score-card #sh-retry-weak-btn')).toBeNull();
+    expect(root.querySelector('#sh-score-card #sh-retry-weak-btn')).not.toBeNull();
     retryWeakBtn?.click();
 
     expect(root.querySelector('#sh-target-text')?.textContent).toBe('usually hot');
