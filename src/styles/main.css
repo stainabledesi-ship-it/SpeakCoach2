@@ -4474,3 +4474,19 @@ button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-
 }
 
 .recording-led { background:var(--record-bg); box-shadow:none; }
+
+/* Fine-grained feedback stays available without competing with the overall estimate. */
+.ielts-result-disclosure { display:block; border-top:1px solid var(--border); padding:4px 0; }
+.ielts-result-disclosure > summary { display:flex; align-items:center; min-height:52px; padding:8px 2px; color:var(--text-primary); font-weight:650; cursor:pointer; list-style:none; }
+.ielts-result-disclosure > summary::-webkit-details-marker { display:none; }
+.ielts-result-disclosure[open] > summary { color:var(--accent); }
+.ielts-result-disclosure > .ielts-result-section { margin:0; padding:12px 0; border:0; background:transparent; box-shadow:none; }
+.ielts-library-page .ielts-set-mode-row { display:block; }
+.ielts-library-page .ielts-mode-segmented { width:100%; }
+.ielts-session-card .ielts-question-meta { display:none; }
+.ielts-session-card .ielts-progress-track { margin:8px 0 16px; height:4px; border-radius:99px; }
+.ielts-session-card .ielts-progress-fill { background:var(--accent); }
+.ielts-session-card .ielts-question-area { padding:8px 0; }
+.ielts-session-card .ielts-action-area { display:flex; flex-direction:column; gap:12px; }
+.ielts-session-card .ielts-recording-label .recording-led { background:var(--record-bg); }
+.card-subtitle, .form-label, .form-field label, .ielts-set-meta, .word-chip-meta, .nav-btn span, small { font-size:max(12px, .8em); }
