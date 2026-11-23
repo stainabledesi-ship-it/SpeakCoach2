@@ -9,7 +9,7 @@ html[data-theme="dark"]{
  --success:#6FCF97;--success-bg:rgba(111,207,151,.15);--warning:#E6B85C;--warning-bg:rgba(230,184,92,.14);
  --danger:#F2878A;--danger-bg:rgba(242,135,138,.14);--neutral-chip:#9FB0B8;
  --record-bg:#C9353F;--record-bg-hover:#AE2B34;--record-border:#AE2B34;--record-text:#FFFFFF;--record-disabled-bg:#6E2A30;
- --shadow-sm:none;--shadow-md:none;
+ --shadow-sm:none;--shadow-md:none;--radius-sm:var(--radius-md);--space-8:32px;--accent-shadow:var(--accent-border);--font-size-xs:12px;--font-size-sm:13px;--font-size-md:15px;--font-size-lg:17px;--font-size-xl:22px;--line-height-body:1.5;--line-height-heading:1.25;--focus-ring-width:2px;--motion-fast:150ms;--motion-standard:200ms;--motion-slow:250ms;--motion-ease:cubic-bezier(.2,.8,.2,1);--shadow-card:none;
 }
 html, body { background: var(--bg-primary); color: var(--text-primary); }
 body {
@@ -331,3 +331,6 @@ button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-vis
 @media(max-width:390px){.view-container{padding:12px;gap:12px}.shadowing-page #sh-target-text{font-size:20px}}
 
 @media(prefers-color-scheme:dark){html:not([data-theme="light"]){color-scheme:dark}}
+
+/* Recording indicators are red in both appearances; teal is reserved for progress. */
+.recording-led { background:var(--record-bg); box-shadow:none; }
