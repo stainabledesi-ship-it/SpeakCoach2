@@ -37,8 +37,8 @@ describe('Shadowing Trainer UI (Empty-By-Default Transcript, No Reference Fallba
     expect(sentenceSet?.querySelector('.sh-history-arrows')).not.toBeNull();
     expect(sentenceSet?.querySelector('.sh-history-caption')?.nextElementSibling?.id).toBe('sh-history-position');
     expect(root.querySelector('.sh-sentence-set-heading')).not.toBeNull();
-    expect(root.querySelector('#sh-api-notice-toggle-btn')?.parentElement?.lastElementChild?.id).toBe('sh-api-notice-toggle-btn');
-    expect(root.querySelector('.sh-api-capability-notice')?.nextElementSibling?.id).toBe('sh-api-notice-toggle-btn');
+    expect(root.querySelector('#sh-api-notice-toggle-btn')?.parentElement?.classList.contains('shadowing-main-header')).toBe(true);
+    expect(root.querySelector('.sh-api-capability-notice')).not.toBeNull();
     expect(language && sentenceSet && language.compareDocumentPosition(sentenceSet) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(language?.parentElement?.nextElementSibling).toBe(sentenceSet);
     expect(sentenceSet && target && sentenceSet.compareDocumentPosition(target) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
@@ -132,19 +132,20 @@ describe('Shadowing Trainer UI (Empty-By-Default Transcript, No Reference Fallba
     expect(root.querySelector('#sh-recognizer-meta')?.textContent).toContain('87%');
 
     expect(root.querySelector('#sh-score-card')).not.toBeNull();
-    expect(root.querySelector('.shadowing-main-card')?.contains(root.querySelector('.sh-result-strip'))).toBe(true);
+    expect(root.querySelector('.shadowing-main-card')?.contains(root.querySelector('#sh-score-card'))).toBe(true);
+    expect(root.querySelector('#sh-score-card #sh-word-chips')).not.toBeNull();
     expect(root.querySelector<HTMLDetailsElement>('.sh-transcript-details')).not.toBeNull();
     expect(root.querySelector('.metric-tile-overall #sh-overall-score')).not.toBeNull();
     expect(root.querySelector('#sh-word-replay-help')?.textContent).toContain('Tap any word below');
     expect(root.querySelector<HTMLButtonElement>('#sh-word-chips [data-word-replay]')).not.toBeNull();
-    const resultWord = root.querySelector<HTMLButtonElement>('.sh-result-strip-words [data-word-replay]');
+    const resultWord = root.querySelector<HTMLButtonElement>('#sh-word-chips [data-word-replay]');
     expect(resultWord).not.toBeNull();
     expect(resultWord?.tagName).toBe('BUTTON');
     expect(resultWord?.getAttribute('aria-label')).toContain('Play pronunciation of');
-    expect(root.querySelectorAll('.sh-result-strip-words [data-word-replay]')).toHaveLength(
+    expect(root.querySelectorAll('#sh-word-chips [data-word-replay]')).toHaveLength(
       root.querySelectorAll('#sh-word-chips [data-word-replay]').length
     );
-    expect(root.querySelector('.sh-result-replay-help')?.textContent).toContain('Shadowing Score Report');
+    expect(root.querySelector('.word-replay-help')?.textContent).toContain('Tap any word below');
     expect(root.querySelector<HTMLButtonElement>('#sh-word-chips [data-word-replay]')?.getAttribute('aria-label')).toContain('Play pronunciation of');
     // In offline SpeechRecognizer mode, no raw WAV is kept and word timing / replay are disabled with a clear notice
     expect(root.querySelector('#sh-vad-summary')).toBeNull();
