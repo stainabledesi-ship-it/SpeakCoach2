@@ -509,14 +509,15 @@ export async function renderSettingsView(
                 </div>
               </div>
             </div>
-            <div class="form-field"><label class="form-label" for="secondary-key-${slotId}">API Key (${secondaryPreset?.requiresKey === false ? 'Offline — no key needed' : keyStorageLabel})</label>
-              <input type="password" class="form-input" id="secondary-key-${slotId}" value="" autocomplete="off" placeholder="${secondaryPreset?.requiresKey === false ? 'No API key needed' : secondaryKeysBySlot[slotId] ? 'API 2 key is stored securely. Leave blank to keep it, or type a replacement.' : 'Enter second API key'}" ${secondaryPreset?.requiresKey === false ? 'disabled' : ''} /></div>
+
             <div class="form-field settings-baseurl-field"><label class="form-label" for="secondary-baseurl-${slotId}">Base URL</label>
               <input type="url" class="form-input settings-baseurl-input" id="secondary-baseurl-${slotId}" value="${escapeHtml(slotCfg.secondary?.baseUrl || secondaryPreset?.defaultBaseUrl || '')}" placeholder="${escapeHtml(secondaryPreset?.baseUrlPlaceholder ?? 'https://api.example.com/v1')}" ${secondaryPreset?.tier === 3 ? 'disabled' : ''} />
               <div class="status-box fail settings-mismatch-warning" id="secondary-mismatch-warning-${slotId}" style="${secondaryMismatchInfo.mismatch ? '' : 'display:none;'}">
                 <div id="secondary-mismatch-warning-text-${slotId}" class="settings-mismatch-copy">${escapeHtml(secondaryMismatchInfo.reason ?? '')}</div>
                 <button type="button" class="btn btn-secondary settings-switch-custom-btn" id="secondary-switch-custom-btn-${slotId}">Switch to Custom (OpenAI-compatible)</button>
               </div></div>
+            <div class="form-field"><label class="form-label" for="secondary-key-${slotId}">API Key (${secondaryPreset?.requiresKey === false ? 'Offline — no key needed' : keyStorageLabel})</label>
+              <input type="password" class="form-input" id="secondary-key-${slotId}" value="" autocomplete="off" placeholder="${secondaryPreset?.requiresKey === false ? 'No API key needed' : secondaryKeysBySlot[slotId] ? 'API 2 key is stored securely. Leave blank to keep it, or type a replacement.' : 'Enter second API key'}" ${secondaryPreset?.requiresKey === false ? 'disabled' : ''} /></div>
             <div class="form-field">
               <div class="settings-field-heading">
                 <label class="form-label" for="secondary-model-${slotId}">${escapeHtml(secondaryPreset?.modelFieldLabel ?? "Model / voice")}</label>
