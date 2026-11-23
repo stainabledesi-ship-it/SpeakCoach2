@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - main
+      - redesign/declutter-ui
     tags:
       - 'v*'
   pull_request:
     branches:
       - main
+      - feature/shadowing-fixes-and-ui-cleanup
   workflow_dispatch:
 
 permissions:
