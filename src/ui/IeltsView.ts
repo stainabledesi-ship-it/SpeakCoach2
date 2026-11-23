@@ -279,8 +279,7 @@ ${summary.slots.llm_evaluator.tier === 3 ? `<div class="status-box info" role="s
             <div class="ielts-library-actions">
               <details class="ielts-generation-sheet">
                 <summary class="btn btn-secondary">New sets</summary>
-                <div class="ielts-generation-sheet-content"><button type="button" class="btn btn-secondary" id="ielts-restore-sets-btn" ${getPreviousIeltsQuestionSetGenerationCount() === 0 || isRegeneratingQuestions ? 'disabled' : ''}>Restore previous sets</button></div>
-              </details>
+                <div class="ielts-generation-sheet-content"><button type="button" class="btn btn-secondary" id="ielts-restore-sets-btn" ${getPreviousIeltsQuestionSetGenerationCount() === 0 || isRegeneratingQuestions ? 'disabled' : ''}>Restore previous sets</button>
             </div>
           </div>
           <div class="form-field ielts-topic-field">
@@ -294,6 +293,8 @@ ${summary.slots.llm_evaluator.tier === 3 ? `<div class="status-box info" role="s
             </div>
             <div id="ielts-set-notice" class="ielts-library-notice" role="status" aria-live="polite" hidden></div>
           </div>
+                </div>
+              </details>
           <div class="ielts-set-mode-row">
             <span class="form-label" id="ielts-mode-label">Test mode</span>
             <div class="ielts-mode-control">
@@ -674,15 +675,10 @@ ${!isPart2
 
     container.innerHTML = `
       <section class="card ielts-session-card">
-        <div class="card-header">
-          <div class="ielts-session-heading">
-            ${state.mode.toUpperCase()} TEST SESSION
-          </div>
-          ${state.status !== 'evaluating' ? `
-          <button type="button" class="btn btn-secondary ielts-quit-button" id="ielts-cancel-test-btn">
-            Quit test
-          </button>
-          ` : ''}
+        <div class="ielts-session-topbar">
+          ${state.status !== 'evaluating' ? `<button type="button" class="ielts-session-close" id="ielts-cancel-test-btn" aria-label="Quit test" title="Quit test">×</button>` : '<span class="ielts-session-close-placeholder"></span>'}
+          <strong>${partLabel} · ${currentQNum} of ${totalQ}</strong>
+          <span class="ielts-session-step-label">${state.status === 'evaluating' ? 'Reviewing' : 'Speaking test'}</span>
         </div>
         ${contentHtml}
       </section>
