@@ -301,35 +301,6 @@ html[data-theme="dark"]:has(.shadowing-page) .view-container {
 }
 
 
-/* Calm Lagoon hierarchy and accessible mobile rhythm */
-body{font-family:var(--font-sans);font-size:15px;background:var(--bg-primary);color:var(--text-primary)}
-.view-container{padding:16px;gap:16px}.card,.ielts-library-card,.shadowing-main-card{border-radius:var(--radius-lg)}
-.card-title{font-size:17px;font-weight:700}.card-subtitle,.form-label,.form-field label{font-size:13px}
-button,select,input,textarea,.nav-btn{min-height:48px}
-button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--accent-border);outline-offset:3px}
-.btn-primary,.pill-btn.active{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}.btn-primary:hover{background:var(--accent-strong)}
-.btn-secondary{background:var(--bg-raised);color:var(--text-primary);border-color:var(--border)}
-.bottom-nav{background:var(--bg-surface);border:0;border-top:1px solid var(--border);box-shadow:none}
-.nav-btn{color:var(--text-secondary)}.nav-btn.active{color:var(--accent);background:var(--accent-soft)}
-.shadowing-page .page-heading{border:0;padding-bottom:0;margin-bottom:2px}.shadowing-page .sh-provider-notice,.shadowing-page .sh-scoring-status{display:none}
-.sh-context-sheet{margin:0 0 4px}.sh-context-summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;padding:8px 14px;border-radius:var(--radius-md);background:var(--bg-elevated);color:var(--text-primary);cursor:pointer}
-.sh-context-summary::-webkit-details-marker{display:none}.sh-context-values{font-size:14px;font-weight:650}.sh-context-action{color:var(--accent);font-size:13px;font-weight:700}
-.sh-context-sheet[open]{padding:0 12px 12px;border-radius:var(--radius-lg);background:var(--bg-surface);border:1px solid var(--border)}
-.sh-context-sheet[open] .sh-context-summary{margin:0 -12px 12px;border-radius:var(--radius-lg) var(--radius-lg) 0 0}
-.shadowing-page .sh-sentence-set-details{margin:0}.shadowing-page .sentence-box{padding:22px 18px;border:0;background:var(--bg-surface);border-radius:var(--radius-lg)}
-.shadowing-page #sh-target-text{font-size:22px;line-height:1.5;font-weight:600}
-.shadowing-page .sh-result-strip,.shadowing-page .sh-score-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px}
-.shadowing-page .sh-api-notice-toggle{width:40px;min-width:40px;min-height:40px;border-radius:50%;padding:0;margin:0}
-.ielts-library-page .page-heading{border:0;padding:0;margin-bottom:12px}.ielts-library-page .ielts-set-mode-row{margin:10px 0 14px}
-.ielts-library-page .ielts-set-status{display:none}.ielts-generation-sheet>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.ielts-generation-sheet>summary::-webkit-details-marker{display:none}.ielts-generation-sheet-content{padding:12px 0}
-.ielts-generation-sheet:not([open]) .ielts-generation-sheet-content{display:none}.ielts-topic-sheet-content{border-top:1px solid var(--border)}
-.ielts-timer-clock{font-variant-numeric:tabular-nums;font-size:40px}.ielts-timer-clock.recording{color:var(--record-bg)}
-.ielts-cue-card{border-radius:var(--radius-lg);background:var(--bg-surface);border:1px solid var(--border);padding:20px}
-.settings-accordion{border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent}
-.ielts-history-record{border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent;padding:14px 2px}
-@media(max-width:390px){.view-container{padding:12px;gap:12px}.shadowing-page #sh-target-text{font-size:20px}}
-
 @media(prefers-color-scheme:dark){html:not([data-theme="light"]){color-scheme:dark}}
 
 /* Recording indicators are red in both appearances; teal is reserved for progress. */
