@@ -228,7 +228,6 @@ export function renderIeltsView(
       // Completed sets live in Test History only; keep the active library limited
       // to the current five pending sets (or fewer if the user has not refreshed).
       const sets = allSets.filter((set) => set.status === 'new' && set.plan.id.includes('llm'));
-      const tierBadge = summary.slots.llm_evaluator.label === 'Online AI' ? 'online' : 'offline';
       const setRows = sets.map((set) => `
         <article class="ielts-set-row">
           <div class="ielts-set-copy">
@@ -279,22 +278,23 @@ ${summary.slots.llm_evaluator.tier === 3 ? `<div class="status-box info" role="s
             <div class="ielts-library-actions">
               <details class="ielts-generation-sheet">
                 <summary class="btn btn-secondary">New sets</summary>
-                <div class="ielts-generation-sheet-content"><button type="button" class="btn btn-secondary" id="ielts-restore-sets-btn" ${getPreviousIeltsQuestionSetGenerationCount() === 0 || isRegeneratingQuestions ? 'disabled' : ''}>Restore previous sets</button>
-            </div>
-          </div>
-          <div class="form-field ielts-topic-field">
-            <label for="ielts-topic-input" class="form-label">Optional topic for Parts 2 &amp; 3</label>
-            <div class="btn-row ielts-topic-input-row">
-              <input type="text" class="form-input ielts-topic-input" id="ielts-topic-input" maxlength="100" placeholder="Leave blank for fully random topics." value="${escapeHtml(requestedTopicInput)}" />
-              <button type="button" class="btn btn-secondary" id="ielts-random-topic-btn">Random topic</button>
-            </div>
-            <div class="ielts-topic-generate-action">
-              <button type="button" class="btn btn-primary ielts-refresh-btn" id="ielts-refresh-sets-btn" ${isRegeneratingQuestions ? 'disabled' : ''}>${isRegeneratingQuestions ? 'Generating…' : 'Get new question sets'}</button>
-            </div>
-            <div id="ielts-set-notice" class="ielts-library-notice" role="status" aria-live="polite" hidden></div>
-          </div>
+                <div class="ielts-generation-sheet-content">
+                  <button type="button" class="btn btn-secondary" id="ielts-restore-sets-btn" ${getPreviousIeltsQuestionSetGenerationCount() === 0 || isRegeneratingQuestions ? 'disabled' : ''}>Restore previous sets</button>
+                  <div class="form-field ielts-topic-field">
+                    <label for="ielts-topic-input" class="form-label">Optional topic for Parts 2 &amp; 3</label>
+                    <div class="btn-row ielts-topic-input-row">
+                      <input type="text" class="form-input ielts-topic-input" id="ielts-topic-input" maxlength="100" placeholder="Leave blank for fully random topics." value="${escapeHtml(requestedTopicInput)}" />
+                      <button type="button" class="btn btn-secondary" id="ielts-random-topic-btn">Random topic</button>
+                    </div>
+                    <div class="ielts-topic-generate-action">
+                      <button type="button" class="btn btn-primary ielts-refresh-btn" id="ielts-refresh-sets-btn" ${isRegeneratingQuestions ? 'disabled' : ''}>${isRegeneratingQuestions ? 'Generating…' : 'Get new question sets'}</button>
+                    </div>
+                    <div id="ielts-set-notice" class="ielts-library-notice" role="status" aria-live="polite" hidden></div>
+                  </div>
                 </div>
               </details>
+            </div>
+          </div>
           <div class="ielts-set-mode-row">
             <span class="form-label" id="ielts-mode-label">Test mode</span>
             <div class="ielts-mode-control">
