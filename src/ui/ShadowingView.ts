@@ -526,15 +526,6 @@ export function renderShadowingView(
       : '') : '';
   const resultStripHtml = '';
   /* The score report is the single result surface; weak-word retry is rendered inside it. */
-  const legacyResultStripHtml = state.lastReport ? `
-    <div class="sh-result-strip" role="group" aria-label="Latest recording result">
-      <div class="sh-result-strip-score" role="status" aria-live="polite">
-        ${drillMode ? `<strong>Correct words</strong><span id="sh-drill-correct-count">${drillCorrect} / ${drillWords.length}</span>` : `<strong>Score ${state.lastReport.overallScore}</strong><span>${state.lastReport.completenessScore}% complete · ${escapeHtml(state.lastReport.overallPaceLabel)} pace</span>`}
-      </div>
-      <div class="sh-result-strip-words">${state.lastReport.words.map(word => { const replayWord = (word.referenceWord || word.spokenWord || '').trim(); const mark = word.status === 'match' ? '✓' : word.status === 'mispronounced' ? '!' : word.status === 'missing' ? '−' : '+'; return `<button type="button" class="sh-result-chip ${word.status}" data-word-replay="${escapeHtml(replayWord)}" aria-label="Play pronunciation of ${escapeHtml(replayWord)}" ${replayWord && !isCaptureBusy && (!isPlaybackActive || isWordPlayback) ? '' : 'disabled'}>${drillMode ? mark + ' ' : ''}${escapeHtml(replayWord)}</button>`; }).join('')}</div>
-      ${weakActionHtml}
-      <p class="sh-result-replay-help">${drillMode ? 'Each chip shows the latest result for that target word.' : 'Tap a word to hear it. For more details and practice with difficult words, see Shadowing Score Report below.'}</p>
-    </div>` : '';
   container.innerHTML = `
     <div class="shadowing-page shadowing-main-card">
       <div class="page-heading shadowing-main-header">
