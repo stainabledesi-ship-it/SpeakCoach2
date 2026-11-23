@@ -248,8 +248,10 @@ function renderVadWaveformSection(vad?: WavVadAnalysisResult): string {
   `;
 }
 
-function renderReportHtml(report: ShadowingScoreReport, hasRecording: boolean, drillMode = false, previousStatuses: Record<string, { status: WordMatchStatus; accuracyScore: number }> = {}, audioBusy = false, playbackActive = false, wordPlayback = false): string {
+function renderReportHtml(report: ShadowingScoreReport, hasRecording: boolean, drillMode = false, previousStatuses: Record<string, { status: WordMatchStatus; accuracyScore: number }> = {}, audioBusy = false, playbackActive = false, wordPlayback = false, weakActionHtml = ''): string {
   const isOfflineMode = report.activeTier.tier === 3 || report.activeTier.label === 'Basic offline';
+  const drillWords = report.words.filter(word => word.referenceWord);
+  const drillCorrect = drillWords.filter(word => word.status === 'match').length;
 
   const chipsHtml = report.words
     .map((w) => {
@@ -337,17 +339,9 @@ function renderReportHtml(report: ShadowingScoreReport, hasRecording: boolean, d
     <div id="sh-score-card" class="sh-score-card">
       <div class="sh-score-heading section-heading">
         <div>
-          <h2 class="card-title">Shadowing Score Report</h2>
-          <p class="card-subtitle">
-            Scored via <strong>${escapeHtml(report.activeTier.detailLabel)}</strong> · Overall Pace: <strong>${Math.round(
-              report.overallPaceRatio * 100
-            )}% (${report.overallPaceLabel})</strong>
-          </p>
+          <h2 class="card-title">Practice results</h2>
+          <p class="card-subtitle">Overall pace: <strong>${Math.round(report.overallPaceRatio * 100)}% · ${report.overallPaceLabel}</strong></p>
         </div>
-        <span class="tier-badge ${report.activeTier.label === 'Online AI' ? 'online' : 'offline'}">
-          <span class="tier-dot"></span>
-          ${report.activeTier.label}
-        </span>
       </div>
 
       ${
@@ -361,6 +355,7 @@ function renderReportHtml(report: ShadowingScoreReport, hasRecording: boolean, d
           <div class="metric-tile metric-tile-overall">
             <div class="metric-value" id="sh-pron-score">${report.pronunciationScore}</div>
             <div class="metric-label">Word match</div>
+            <div class="card-subtitle" id="sh-drill-correct-count">${drillCorrect} / ${drillWords.length} words matched</div>
           </div>
         ` : `
           <div class="metric-tile metric-tile-overall"><div class="metric-value" id="sh-overall-score">${report.overallScore}</div><div class="metric-label">Overall score</div></div>
@@ -375,15 +370,14 @@ function renderReportHtml(report: ShadowingScoreReport, hasRecording: boolean, d
       <div class="word-tokens-wrap" id="sh-word-chips">
         ${chipsHtml}
       </div>
+      ${weakActionHtml}
 
       <div class="btn-row sh-report-playback-actions">
         ${replayRecBtn}
       </div>
 
-      ${drillMode ? '' : isOfflineMode
-        ? `${renderVadWaveformSection(report.vadAnalysis)}${timingSectionHtml}`
-        : `<details class="sh-timing-details">
-            <summary>Timing &amp; voice activity details</summary>
+      ${drillMode ? '' : `<details class="sh-timing-details">
+            <summary>Details · Timing &amp; voice activity <span class="tier-badge ${report.activeTier.label === 'Online AI' ? 'online' : 'offline'}">${escapeHtml(report.activeTier.label)}</span></summary>
             ${renderVadWaveformSection(report.vadAnalysis)}
             ${timingSectionHtml}
           </details>`}
@@ -513,7 +507,6 @@ export function renderShadowingView(
 
   const drillMode = Boolean(state.customDrillText);
   const drillWords = state.lastReport?.words.filter(word => word.referenceWord) ?? [];
-  const drillCorrect = drillWords.filter(word => word.status === 'match').length;
   const weakReferenceWords = [...new Set(state.lastReport?.words.filter(word => word.referenceWord && word.status !== 'match').map(word => word.referenceWord!) ?? [])];
   const remainingDrillWords = [...new Set(drillWords.filter(word => word.status !== 'match').map(word => word.referenceWord!).filter(Boolean))];
   const weakActionHtml = state.lastReport ? (drillMode
@@ -523,27 +516,23 @@ export function renderShadowingView(
     : weakReferenceWords.length
       ? `<div class="sh-retry-weak-actions"><button type="button" class="btn btn-primary" id="sh-retry-weak-btn" ${isCaptureBusy || isPlaybackActive ? 'disabled' : ''}><span>${weakReferenceWords.length === 1 ? 'Practice weak word' : 'Retry weak words'}</span> ${weakReferenceWords.length === 1 ? '' : `(<span>${weakReferenceWords.length}</span>)`}</button></div>`
       : '') : '';
-  const resultStripHtml = state.lastReport ? `
-    <div class="sh-result-strip" role="group" aria-label="Latest recording result">
-      <div class="sh-result-strip-score" role="status" aria-live="polite">
-        ${drillMode ? `<strong>Correct words</strong><span id="sh-drill-correct-count">${drillCorrect} / ${drillWords.length}</span>` : `<strong>Score ${state.lastReport.overallScore}</strong><span>${state.lastReport.completenessScore}% complete · ${escapeHtml(state.lastReport.overallPaceLabel)} pace</span>`}
-      </div>
-      <div class="sh-result-strip-words">${state.lastReport.words.map(word => { const replayWord = (word.referenceWord || word.spokenWord || '').trim(); const mark = word.status === 'match' ? '✓' : word.status === 'mispronounced' ? '!' : word.status === 'missing' ? '−' : '+'; return `<button type="button" class="sh-result-chip ${word.status}" data-word-replay="${escapeHtml(replayWord)}" aria-label="Play pronunciation of ${escapeHtml(replayWord)}" ${replayWord && !isCaptureBusy && (!isPlaybackActive || isWordPlayback) ? '' : 'disabled'}>${drillMode ? mark + ' ' : ''}${escapeHtml(replayWord)}</button>`; }).join('')}</div>
-      ${weakActionHtml}
-      <p class="sh-result-replay-help">${drillMode ? 'Each chip shows the latest result for that target word.' : 'Tap a word to hear it. For more details and practice with difficult words, see Shadowing Score Report below.'}</p>
-    </div>` : '';
+  const resultStripHtml = '';
+  /* The score report is the single result surface; weak-word retry is rendered inside it. */
   container.innerHTML = `
     <div class="shadowing-page shadowing-main-card">
       <div class="page-heading shadowing-main-header">
         <div class="page-heading-title">
           <h1 class="card-title shadowing-page-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v3m-4 0h8"/></svg>Shadowing Trainer</h1>
         </div>
-        <span class="tier-badge ${scoringTier.label === 'Online AI' ? 'online' : 'offline'}">
+        <button type="button" class="btn btn-secondary sh-api-notice-toggle" aria-label="Speech help" title="Speech help" id="sh-api-notice-toggle-btn" aria-controls="sh-api-capability-notice">?</button>
+        <span class="tier-badge sh-scoring-status ${scoringTier.label === 'Online AI' ? 'online' : 'offline'}">
           <span class="tier-dot"></span>
           ${scoringTier.label}
         </span>
       </div>
       ${ttsTier.reason ? `<p class="sh-provider-notice" role="status">Voice: <strong>${escapeHtml(ttsTier.label)}</strong> · ${escapeHtml(ttsTier.reason)}</p>` : ''}
+      <details class="sh-context-sheet">
+        <summary class="sh-context-summary"><span class="sh-context-values">${escapeHtml(selectedLanguage.nativeName)} · ${state.difficulty[0].toUpperCase()+state.difficulty.slice(1)} · ${activeSet ? activeHistory.sets.findIndex(set => set.id === activeSet.id)+1 : 0} / ${activeHistory.sets.length}</span><span class="sh-context-action">Change</span></summary>
       <div class="sh-language-picker-field">
         <label class="sh-language-picker-label" for="sh-language-select">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
@@ -584,6 +573,7 @@ export function renderShadowingView(
         ${state.aiGenerationError ? `<div class="status-box fail ai-generation-error" id="sh-ai-generation-error" role="alert">${escapeHtml(state.aiGenerationError)}</div>` : ''}
       </div>
       </section>
+      </details>
 
       
       ${!hasLanguageSentenceSet ? `<div class="status-box info sh-empty-language-history" role="status">There are no saved ${escapeHtml(selectedLanguage.label)} sentences yet. Generate a sentence set in this language to begin. Your English sentence history remains separate. <button type="button" class="btn btn-primary" id="sh-empty-generate-btn">Generate now</button></div>` : ''}
@@ -595,7 +585,7 @@ export function renderShadowingView(
 
 
       <p class="card-subtitle sh-ai-sentence-count shadowing-topic-label">${state.customDrillText ? 'Weak-word drill' : `<span class="sh-topic-caption" dir="auto">Topic: ${escapeHtml(sentence?.topic ?? 'Offline practice')}</span><span class="sh-sentence-count">${hasLanguageSentenceSet ? `Sentence ${state.index + 1} of ${activeSet?.sentences.length ?? 0}` : 'No sentence set yet'}</span>`}</p>
-      <div class="sentence-box" id="sh-target-text">${escapeHtml(targetText)}</div>
+      <div class="sentence-box" id="sh-target-text" dir="auto">${escapeHtml(targetText)}</div>
       <p class="card-subtitle sh-focus-copy">
         ${
           state.customDrillText
@@ -635,7 +625,7 @@ export function renderShadowingView(
 
       ${resultStripHtml}
     <section class="sh-result-details">
-      ${state.lastReport ? renderReportHtml(state.lastReport, Boolean(state.lastRecording?.wavBase64), drillMode, state.drillPreviousStatuses, isCaptureBusy, isPlaybackActive, isWordPlayback) : ''}
+      ${state.lastReport ? renderReportHtml(state.lastReport, Boolean(state.lastRecording?.wavBase64), drillMode, state.drillPreviousStatuses, isCaptureBusy, isPlaybackActive, isWordPlayback, weakActionHtml) : ''}
       <details class="sh-transcript-details" ${state.recognizerError ? 'open' : ''}>
         <summary>Transcript &amp; recognition details</summary>
         <div class="form-field sh-transcript-field">
@@ -657,6 +647,8 @@ export function renderShadowingView(
     </section>
     </div>
 
+    <details class="sh-translation-disclosure" id="sh-translation-disclosure">
+      <summary>Translate &amp; explain grammar</summary>
     <section class="card sh-translation-card" id="sh-translation-card">
       <div class="card-header">
         <div>
@@ -682,6 +674,7 @@ export function renderShadowingView(
       ${state.grammarResult ? `<div class="sh-translation-result sh-grammar-result" id="sh-grammar-result"><div class="form-label">Grammar explanation</div><div dir="auto">${escapeHtml(state.grammarResult).replace(/\n/g, '<br>')}</div></div>` : ''}
       ${state.translationStatus ? `<div class="status-box ${state.translationStatusType}" id="sh-translation-status" role="status" aria-live="polite">${escapeHtml(state.translationStatus)}</div>` : ''}
     </section>
+    </details>
       <details class="offline-quality-notice sh-api-capability-notice" id="sh-api-capability-notice" aria-label="Speech API capability notice" ${state.forceSpeechApiNotice ? '' : 'hidden'} ${state.forceSpeechApiNotice ? 'open' : ''}>
         <summary><strong>Speech API compatibility &amp; troubleshooting</strong></summary>
         <strong>Important: speech APIs have separate capabilities</strong>
@@ -689,7 +682,6 @@ export function renderShadowingView(
         <p>For custom OpenAI-compatible APIs, enter the exact model name supported by your gateway. The suggested model list is only a convenience, not a restriction. Your gateway must expose the matching <code>/audio/speech</code> or <code>/audio/transcriptions</code> endpoint.</p>
         <button type="button" class="btn btn-secondary sh-api-notice-dismiss" id="sh-api-notice-dismiss-btn">I understand</button>
       </details>
-      <button type="button" class="btn btn-secondary sh-api-notice-toggle" id="sh-api-notice-toggle-btn" aria-controls="sh-api-capability-notice">ⓘ Troubleshooting</button>
   `;
 
   if (isCaptureBusy) {

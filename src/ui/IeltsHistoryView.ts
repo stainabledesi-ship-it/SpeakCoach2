@@ -125,7 +125,7 @@ export async function renderIeltsHistoryView(
             </div>
 
             ${hasScore && evalRes ? `
-            <div class="ielts-history-criteria">
+            <details class="ielts-history-more"><summary>Scoring details</summary><div class="ielts-history-criteria">
               <div>
                 <div class="ielts-history-criterion-label">Fluency</div>
                 <strong class="ielts-history-criterion-value">${evalRes.fluencyCoherenceBand != null ? evalRes.fluencyCoherenceBand.toFixed(1) : '—'}</strong>
@@ -142,7 +142,7 @@ export async function renderIeltsHistoryView(
                 <div class="ielts-history-criterion-label">Pronunciation</div>
                 <strong class="ielts-history-criterion-value">Not assessed</strong>
               </div>
-            </div>
+            </div></details>
             ` : `
             <div class="status-box info ielts-history-no-score" role="status">
               <strong>${escapeHtml(noScoreMessage)}</strong>
@@ -191,6 +191,34 @@ export async function renderIeltsHistoryView(
       })
       .join('');
 
+    const trendRecords = history.filter(item => {
+      const evaluation = item.evaluation;
+      const legacyPronunciation = typeof evaluation?.pronunciationBand === 'number';
+      const legacyOfflineBand = typeof item.overallBand === 'number' && (!evaluation?.activeTier || evaluation.activeTier.tier >= 3);
+      return typeof item.overallBand === 'number' && Number.isFinite(item.overallBand)
+        && evaluation?.activeTier?.tier != null && evaluation.activeTier.tier < 3
+        && !legacyPronunciation && !legacyOfflineBand;
+    }).slice().reverse();
+    const trendPoints = trendRecords.map((item, index) => {
+      const x = trendRecords.length === 1 ? 160 : 12 + index * (296 / (trendRecords.length - 1));
+      const band = Math.max(0, Math.min(9, item.overallBand as number));
+      const y = 60 - (band / 9) * 48;
+      return { x, y, band };
+    });
+    const trendChartHtml = trendPoints.length >= 2 ? `
+      <section class="ielts-history-trend" aria-label="Practice band trend">
+        <div class="ielts-history-trend-heading">
+          <strong>Practice trend</strong>
+          <span>Last ${trendPoints.length} scored sessions</span>
+        </div>
+        <svg viewBox="0 0 320 76" role="img" aria-label="Practice band trend from ${trendPoints[0].band.toFixed(1)} to ${trendPoints[trendPoints.length - 1].band.toFixed(1)}">
+          <path class="ielts-trend-guide" d="M12 12H308M12 36H308M12 60H308"></path>
+          <polyline class="ielts-trend-line" points="${trendPoints.map(point => `${point.x},${point.y}`).join(' ')}"></polyline>
+          ${trendPoints.map(point => `<circle class="ielts-trend-point" cx="${point.x}" cy="${point.y}" r="3.5"></circle>`).join('')}
+        </svg>
+        <div class="ielts-history-trend-labels"><span>Earlier</span><strong>${trendPoints[trendPoints.length - 1].band.toFixed(1)} latest</strong></div>
+      </section>` : '';
+
     container.innerHTML = `
       <section class="card ielts-history-card">
         <div class="card-header">
@@ -209,6 +237,7 @@ export async function renderIeltsHistoryView(
           </div>
         </div>
 
+        ${trendChartHtml}
         <div class="ielts-history-record-list">
           ${itemsHtml}
         </div>

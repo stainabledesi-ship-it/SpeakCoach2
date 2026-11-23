@@ -228,14 +228,13 @@ export function renderIeltsView(
       // Completed sets live in Test History only; keep the active library limited
       // to the current five pending sets (or fewer if the user has not refreshed).
       const sets = allSets.filter((set) => set.status === 'new' && set.plan.id.includes('llm'));
-      const tierBadge = summary.slots.llm_evaluator.label === 'Online AI' ? 'online' : 'offline';
       const setRows = sets.map((set) => `
         <article class="ielts-set-row">
           <div class="ielts-set-copy">
             <div class="ielts-set-title">${escapeHtml(set.title)}</div>
             <div class="ielts-set-meta">${set.plan.part1Questions.length} Part 1 prompts · 1 cue card · ${set.plan.part3Questions.length} Part 3 prompts</div>
           </div>
-          <span class="ielts-set-status ${set.status}">${set.status === 'completed' ? 'Completed' : 'Ready'}</span>
+          
           <button type="button" class="btn btn-primary ielts-set-start" data-start-set="${escapeHtml(set.id)}">Start practice</button>
         </article>
       `).join('');
@@ -246,7 +245,7 @@ export function renderIeltsView(
             <div class="page-heading-title">
               <h1 class="card-title">IELTS Speaking</h1>
             </div>
-            <span class="tier-badge ${tierBadge}"><span class="tier-dot"></span>${summary.slots.llm_evaluator.tier === 3 ? 'API required' : 'Online AI'}</span>
+            
           </div>
 
           <div id="ielts-eval-warning-banner" class="ielts-evaluator-chip" style="display:${evaluatorWarningText ? 'flex' : 'none'};">
@@ -277,19 +276,24 @@ ${summary.slots.llm_evaluator.tier === 3 ? `<div class="status-box info" role="s
               <p class="card-subtitle">${sets.length} available · ${allSets.filter((set) => set.status === 'completed').length} completed in history</p>
             </div>
             <div class="ielts-library-actions">
-              <button type="button" class="btn btn-secondary" id="ielts-restore-sets-btn" ${getPreviousIeltsQuestionSetGenerationCount() === 0 || isRegeneratingQuestions ? 'disabled' : ''}>Restore previous sets</button>
+              <details class="ielts-generation-sheet">
+                <summary class="btn btn-secondary">New sets</summary>
+                <div class="ielts-generation-sheet-content">
+                  <button type="button" class="btn btn-secondary" id="ielts-restore-sets-btn" ${getPreviousIeltsQuestionSetGenerationCount() === 0 || isRegeneratingQuestions ? 'disabled' : ''}>Restore previous sets</button>
+                  <div class="form-field ielts-topic-field">
+                    <label for="ielts-topic-input" class="form-label">Optional topic for Parts 2 &amp; 3</label>
+                    <div class="btn-row ielts-topic-input-row">
+                      <input type="text" class="form-input ielts-topic-input" id="ielts-topic-input" maxlength="100" placeholder="Leave blank for fully random topics." value="${escapeHtml(requestedTopicInput)}" />
+                      <button type="button" class="btn btn-secondary" id="ielts-random-topic-btn">Random topic</button>
+                    </div>
+                    <div class="ielts-topic-generate-action">
+                      <button type="button" class="btn btn-primary ielts-refresh-btn" id="ielts-refresh-sets-btn" ${isRegeneratingQuestions ? 'disabled' : ''}>${isRegeneratingQuestions ? 'Generating…' : 'Get new question sets'}</button>
+                    </div>
+                    <div id="ielts-set-notice" class="ielts-library-notice" role="status" aria-live="polite" hidden></div>
+                  </div>
+                </div>
+              </details>
             </div>
-          </div>
-          <div class="form-field ielts-topic-field">
-            <label for="ielts-topic-input" class="form-label">Optional topic for Parts 2 &amp; 3</label>
-            <div class="btn-row ielts-topic-input-row">
-              <input type="text" class="form-input ielts-topic-input" id="ielts-topic-input" maxlength="100" placeholder="Leave blank for fully random topics." value="${escapeHtml(requestedTopicInput)}" />
-              <button type="button" class="btn btn-secondary" id="ielts-random-topic-btn">Random topic</button>
-            </div>
-            <div class="ielts-topic-generate-action">
-              <button type="button" class="btn btn-primary ielts-refresh-btn" id="ielts-refresh-sets-btn" ${isRegeneratingQuestions ? 'disabled' : ''}>${isRegeneratingQuestions ? 'Generating…' : 'Get new question sets'}</button>
-            </div>
-            <div id="ielts-set-notice" class="ielts-library-notice" role="status" aria-live="polite" hidden></div>
           </div>
           <div class="ielts-set-mode-row">
             <span class="form-label" id="ielts-mode-label">Test mode</span>
@@ -671,15 +675,10 @@ ${!isPart2
 
     container.innerHTML = `
       <section class="card ielts-session-card">
-        <div class="card-header">
-          <div class="ielts-session-heading">
-            ${state.mode.toUpperCase()} TEST SESSION
-          </div>
-          ${state.status !== 'evaluating' ? `
-          <button type="button" class="btn btn-secondary ielts-quit-button" id="ielts-cancel-test-btn">
-            Quit test
-          </button>
-          ` : ''}
+        <div class="ielts-session-topbar">
+          ${state.status !== 'evaluating' ? `<button type="button" class="ielts-session-close" id="ielts-cancel-test-btn" aria-label="Quit test" title="Quit test">×</button>` : '<span class="ielts-session-close-placeholder"></span>'}
+          <strong>${partLabel} · ${currentQNum} of ${totalQ}</strong>
+          <span class="ielts-session-step-label">${state.status === 'evaluating' ? 'Reviewing' : 'Speaking test'}</span>
         </div>
         ${contentHtml}
       </section>

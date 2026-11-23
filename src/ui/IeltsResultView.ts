@@ -342,6 +342,7 @@ export function renderIeltsResultView(
   const answerCount = record.answers.length;
 
   const objectiveStatsHtml = `
+    <details class="ielts-result-disclosure"><summary>Speech statistics</summary>
     <section class="card ielts-result-section ielts-result-section-spaced" id="result-objective-stats">
       <div class="card-header">
         <h3 class="card-title ielts-result-section-title">Speech statistics</h3>
@@ -370,12 +371,14 @@ export function renderIeltsResultView(
         </div>
       </div>
     </section>
+    </details>
   `;
 
   // Grammar corrections HTML
   let grammarHtml = '';
   if (evalRes?.corrections && evalRes.corrections.length > 0) {
     grammarHtml = `
+      <details class="ielts-result-disclosure"><summary>Grammar corrections (${evalRes.corrections.length})</summary>
       <section class="card ielts-result-section ielts-result-section-spaced">
         <h3 class="card-title ielts-result-section-title">Grammar corrections</h3>
         <div class="ielts-feedback-list">
@@ -398,6 +401,7 @@ export function renderIeltsResultView(
             .join('')}
         </div>
       </section>
+      </details>
     `;
   }
 
@@ -405,6 +409,7 @@ export function renderIeltsResultView(
   let vocabHtml = '';
   if (evalRes?.vocabularyUpgrades && evalRes.vocabularyUpgrades.length > 0) {
     vocabHtml = `
+      <details class="ielts-result-disclosure"><summary>Vocabulary upgrades (${evalRes.vocabularyUpgrades.length})</summary>
       <section class="card ielts-result-section ielts-result-section-spaced">
         <h3 class="card-title ielts-result-section-title">Vocabulary upgrades</h3>
         <div class="ielts-feedback-list">
@@ -426,6 +431,7 @@ export function renderIeltsResultView(
             .join('')}
         </div>
       </section>
+      </details>
     `;
   }
 
@@ -433,6 +439,7 @@ export function renderIeltsResultView(
   let modelAnswersHtml = '';
   if (evalRes?.modelAnswers && evalRes.modelAnswers.length > 0) {
     modelAnswersHtml = `
+      <details class="ielts-result-disclosure"><summary>Model answers (${evalRes.modelAnswers.length})</summary>
       <section class="card ielts-result-section ielts-result-section-spaced">
         <h3 class="card-title ielts-result-section-title">Band 7–9 model answers</h3>
         <div class="ielts-feedback-list">
@@ -452,6 +459,7 @@ export function renderIeltsResultView(
             .join('')}
         </div>
       </section>
+      </details>
     `;
   }
 
@@ -595,12 +603,14 @@ export function renderIeltsResultView(
         </div>
       </div>
 
+      <details class="ielts-result-disclosure"><summary>Scoring criteria &amp; next steps</summary>
       <section class="ielts-criteria-section" aria-label="IELTS scoring criteria">
         <h3 class="ielts-criteria-title">Assessed criteria</h3>
         <p class="card-subtitle">Three criteria are estimated. Pronunciation is not assessed by speech-recognition confidence.</p>
         <div class="ielts-criteria-list">${criterionBarsHtml}</div>
       </section>
       ${nextFocusHtml}
+      </details>
 
       ${evaluationControlsHtml}
       <div class="btn-row ielts-result-actions">
