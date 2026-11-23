@@ -381,10 +381,8 @@ function renderReportHtml(report: ShadowingScoreReport, hasRecording: boolean, d
         ${replayRecBtn}
       </div>
 
-      ${drillMode ? '' : isOfflineMode
-        ? `${renderVadWaveformSection(report.vadAnalysis)}${timingSectionHtml}`
-        : `<details class="sh-timing-details">
-            <summary>Timing &amp; voice activity details</summary>
+      ${drillMode ? '' : `<details class="sh-timing-details">
+            <summary>Details · Timing &amp; voice activity</summary>
             ${renderVadWaveformSection(report.vadAnalysis)}
             ${timingSectionHtml}
           </details>`}
@@ -532,6 +530,7 @@ export function renderShadowingView(
         <div class="page-heading-title">
           <h1 class="card-title shadowing-page-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v3m-4 0h8"/></svg>Shadowing Trainer</h1>
         </div>
+        <button type="button" class="btn btn-secondary sh-api-notice-toggle" aria-label="Speech help" title="Speech help" id="sh-api-notice-toggle-btn" aria-controls="sh-api-capability-notice">?</button>
         <span class="tier-badge sh-scoring-status ${scoringTier.label === 'Online AI' ? 'online' : 'offline'}">
           <span class="tier-dot"></span>
           ${scoringTier.label}
@@ -592,7 +591,7 @@ export function renderShadowingView(
 
 
       <p class="card-subtitle sh-ai-sentence-count shadowing-topic-label">${state.customDrillText ? 'Weak-word drill' : `<span class="sh-topic-caption" dir="auto">Topic: ${escapeHtml(sentence?.topic ?? 'Offline practice')}</span><span class="sh-sentence-count">${hasLanguageSentenceSet ? `Sentence ${state.index + 1} of ${activeSet?.sentences.length ?? 0}` : 'No sentence set yet'}</span>`}</p>
-      <div class="sentence-box" id="sh-target-text">${escapeHtml(targetText)}</div>
+      <div class="sentence-box" id="sh-target-text" dir="auto">${escapeHtml(targetText)}</div>
       <p class="card-subtitle sh-focus-copy">
         ${
           state.customDrillText
@@ -689,7 +688,6 @@ export function renderShadowingView(
         <p>For custom OpenAI-compatible APIs, enter the exact model name supported by your gateway. The suggested model list is only a convenience, not a restriction. Your gateway must expose the matching <code>/audio/speech</code> or <code>/audio/transcriptions</code> endpoint.</p>
         <button type="button" class="btn btn-secondary sh-api-notice-dismiss" id="sh-api-notice-dismiss-btn">I understand</button>
       </details>
-      <button type="button" class="btn btn-secondary sh-api-notice-toggle" aria-label="Speech help" title="Speech help" id="sh-api-notice-toggle-btn" aria-controls="sh-api-capability-notice">?</button>
   `;
 
   if (isCaptureBusy) {
