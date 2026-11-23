@@ -74,7 +74,7 @@ describe('theme contrast and semantic palette', () => {
   it('uses a plain charcoal canvas for unframed dark-mode pages', () => {
     expect(darkCss).toContain('background-color:var(--bg-primary)');
     expect(darkCss).toContain('background:#17191C !important');
-    expect(darkCss).not.toMatch(/gradient\\s*\\(/);
+    expect(darkCss).not.toMatch(/gradient\s*\(/);
   });
 
   it('uses semantic status tokens for word chips and avoids decorative dark gradients/shadows', () => {
