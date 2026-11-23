@@ -135,8 +135,18 @@ export async function renderSettingsView(
     });
   }
 
+  const slotDisplayCopy: Record<SlotId, { title: string; purpose: string }> = {
+    voice_tts: { title: 'Voice', purpose: 'Speak sentences and examiner questions' },
+    pronunciation_scoring: { title: 'Shadowing feedback', purpose: 'Check spoken words and timing' },
+    ielts_stt: { title: 'Speech recognition', purpose: 'Turn IELTS answers into text' },
+    llm_evaluator: { title: 'Smart scoring', purpose: 'Evaluate IELTS answers and give feedback' },
+    llm_generator: { title: 'Question generator', purpose: 'Create practice questions and sentences' },
+    llm_translation: { title: 'Translation & grammar', purpose: 'Translate and explain the current sentence' }
+  };
+
   const cardsHtml = SLOT_ORDER.map((slotId) => {
     const def = SLOT_DEFINITIONS[slotId];
+    const displayCopy = slotDisplayCopy[slotId];
     const slotCfg = configs[slotId];
     const preset = getPreset(slotId, slotCfg.providerId);
     const resolved = summary.slots[slotId];
@@ -295,8 +305,8 @@ export async function renderSettingsView(
       <details class="card settings-accordion" data-slot-card="${slotId}">
         <summary class="settings-accordion-summary">
           <span class="settings-accordion-heading">
-            <span class="card-title">${escapeHtml(def.title)}</span>
-            <span class="card-subtitle">${escapeHtml(def.subtitle)}</span>
+            <span class="card-title">${escapeHtml(displayCopy.title)}</span>
+            <span class="card-subtitle">${escapeHtml(displayCopy.purpose)}</span>
           </span>
           <span class="settings-accordion-meta">
             <span class="tier-badge ${badgeClass} settings-slot-status" id="badge-${slotId}" data-slot-status="${slotStatus}">
