@@ -353,6 +353,7 @@ function renderReportHtml(report: ShadowingScoreReport, hasRecording: boolean, d
           <div class="metric-tile metric-tile-overall">
             <div class="metric-value" id="sh-pron-score">${report.pronunciationScore}</div>
             <div class="metric-label">Word match</div>
+            <div class="card-subtitle" id="sh-drill-correct-count">${drillCorrect} / ${drillWords.length} words matched</div>
           </div>
         ` : `
           <div class="metric-tile metric-tile-overall"><div class="metric-value" id="sh-overall-score">${report.overallScore}</div><div class="metric-label">Overall score</div></div>
@@ -504,6 +505,7 @@ export function renderShadowingView(
 
   const drillMode = Boolean(state.customDrillText);
   const drillWords = state.lastReport?.words.filter(word => word.referenceWord) ?? [];
+  const drillCorrect = drillWords.filter(word => word.status === 'match').length;
   const weakReferenceWords = [...new Set(state.lastReport?.words.filter(word => word.referenceWord && word.status !== 'match').map(word => word.referenceWord!) ?? [])];
   const remainingDrillWords = [...new Set(drillWords.filter(word => word.status !== 'match').map(word => word.referenceWord!).filter(Boolean))];
   const weakActionHtml = state.lastReport ? (drillMode
