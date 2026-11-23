@@ -5,7 +5,7 @@
  --bg-primary:#F6F5F1; --bg-surface:#FFFFFF; --bg-elevated:#EFEDE7; --bg-raised:#E6E3DB; --border:#DAD6CC;
  --text-primary:#1B2321; --text-secondary:#4A5552; --text-muted:#67716E;
  --accent:#0E6B63; --accent-strong:#0A524C; --accent-soft:rgba(14,107,99,.10); --accent-border:rgba(14,107,99,.45); --on-accent:#FFFFFF; --primary:var(--accent);
- --success:#3F741B; --success-bg:rgba(63,116,27,.12); --warning:#8A5A00; --warning-bg:rgba(138,90,0,.12);
+ --success:#596E12; --success-bg:rgba(89,110,18,.12); --warning:#8A5A00; --warning-bg:rgba(138,90,0,.12);
  --danger:#B3261E; --danger-bg:rgba(179,38,30,.10); --neutral-chip:#5F6B73;
  --record-bg:#C4303A; --record-bg-hover:#A82731; --record-border:#A82731; --record-text:#FFFFFF; --record-disabled-bg:#D9A3A7;
  --shadow-sm:0 1px 2px rgba(27,35,33,.06); --shadow-md:0 6px 20px rgba(27,35,33,.08);
