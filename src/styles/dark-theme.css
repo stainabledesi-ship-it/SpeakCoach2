@@ -334,3 +334,5 @@ button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-vis
 
 /* Recording indicators are red in both appearances; teal is reserved for progress. */
 .recording-led { background:var(--record-bg); box-shadow:none; }
+
+html[data-theme="dark"] .recording-led { background:var(--record-bg); box-shadow:none; }
