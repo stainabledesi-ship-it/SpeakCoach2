@@ -374,7 +374,7 @@ function renderReportHtml(report: ShadowingScoreReport, hasRecording: boolean, d
       </div>
 
       ${drillMode ? '' : `<details class="sh-timing-details">
-            <summary>Details · Timing &amp; voice activity</summary>
+            <summary>Details · Timing &amp; voice activity <span class="tier-badge ${report.activeTier.label === 'Online AI' ? 'online' : 'offline'}">${escapeHtml(report.activeTier.label)}</span></summary>
             ${renderVadWaveformSection(report.vadAnalysis)}
             ${timingSectionHtml}
           </details>`}
