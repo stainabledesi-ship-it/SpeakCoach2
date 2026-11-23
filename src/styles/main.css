@@ -4490,3 +4490,21 @@ button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-
 .ielts-session-card .ielts-action-area { display:flex; flex-direction:column; gap:12px; }
 .ielts-session-card .ielts-recording-label .recording-led { background:var(--record-bg); }
 .card-subtitle, .form-label, .form-field label, .ielts-set-meta, .word-chip-meta, .nav-btn span, small { font-size:max(12px, .8em); }
+
+.shadowing-main-header { position:relative; padding-inline-end:48px; }
+.shadowing-page .sh-history-position { display:none; }
+.sh-translation-disclosure { margin:8px 0 0; border-top:1px solid var(--border); }
+.sh-translation-disclosure > summary { display:flex; align-items:center; min-height:52px; padding:8px 2px; color:var(--text-primary); font-weight:650; cursor:pointer; list-style:none; }
+.sh-translation-disclosure > summary::-webkit-details-marker { display:none; }
+.sh-translation-disclosure[open] > summary { color:var(--accent); }
+.sh-translation-card { margin:0; padding:14px 0; border:0; background:transparent; box-shadow:none; }
+.ielts-history-trend { margin:8px 0 18px; padding:12px 14px; border-radius:var(--radius-lg); background:var(--bg-elevated); }
+.ielts-history-trend-heading, .ielts-history-trend-labels { display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:13px; }
+.ielts-history-trend-heading span, .ielts-history-trend-labels span { color:var(--text-muted); }
+.ielts-history-trend svg { display:block; width:100%; height:auto; margin:8px 0 2px; overflow:visible; }
+.ielts-trend-guide { fill:none; stroke:var(--border); stroke-width:1; stroke-dasharray:3 4; }
+.ielts-trend-line { fill:none; stroke:var(--accent); stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+.ielts-trend-point { fill:var(--accent); stroke:var(--bg-surface); stroke-width:1.5; }
+.ielts-history-more { margin:6px 0; }
+.ielts-history-more > summary { min-height:40px; display:flex; align-items:center; color:var(--text-secondary); font-size:12px; cursor:pointer; }
+.ielts-history-more[open] > summary { color:var(--accent); }
