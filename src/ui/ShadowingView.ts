@@ -248,7 +248,7 @@ function renderVadWaveformSection(vad?: WavVadAnalysisResult): string {
   `;
 }
 
-function renderReportHtml(report: ShadowingScoreReport, hasRecording: boolean, drillMode = false, previousStatuses: Record<string, { status: WordMatchStatus; accuracyScore: number }> = {}, audioBusy = false, playbackActive = false, wordPlayback = false): string {
+function renderReportHtml(report: ShadowingScoreReport, hasRecording: boolean, drillMode = false, previousStatuses: Record<string, { status: WordMatchStatus; accuracyScore: number }> = {}, audioBusy = false, playbackActive = false, wordPlayback = false, weakActionHtml = ''): string {
   const isOfflineMode = report.activeTier.tier === 3 || report.activeTier.label === 'Basic offline';
 
   const chipsHtml = report.words
@@ -375,6 +375,7 @@ function renderReportHtml(report: ShadowingScoreReport, hasRecording: boolean, d
       <div class="word-tokens-wrap" id="sh-word-chips">
         ${chipsHtml}
       </div>
+      ${weakActionHtml}
 
       <div class="btn-row sh-report-playback-actions">
         ${replayRecBtn}
@@ -523,7 +524,9 @@ export function renderShadowingView(
     : weakReferenceWords.length
       ? `<div class="sh-retry-weak-actions"><button type="button" class="btn btn-primary" id="sh-retry-weak-btn" ${isCaptureBusy || isPlaybackActive ? 'disabled' : ''}><span>${weakReferenceWords.length === 1 ? 'Practice weak word' : 'Retry weak words'}</span> ${weakReferenceWords.length === 1 ? '' : `(<span>${weakReferenceWords.length}</span>)`}</button></div>`
       : '') : '';
-  const resultStripHtml = state.lastReport ? `
+  const resultStripHtml = '';
+  /* The score report is the single result surface; weak-word retry is rendered inside it. */
+  const legacyResultStripHtml = state.lastReport ? `
     <div class="sh-result-strip" role="group" aria-label="Latest recording result">
       <div class="sh-result-strip-score" role="status" aria-live="polite">
         ${drillMode ? `<strong>Correct words</strong><span id="sh-drill-correct-count">${drillCorrect} / ${drillWords.length}</span>` : `<strong>Score ${state.lastReport.overallScore}</strong><span>${state.lastReport.completenessScore}% complete · ${escapeHtml(state.lastReport.overallPaceLabel)} pace</span>`}
@@ -638,7 +641,7 @@ export function renderShadowingView(
 
       ${resultStripHtml}
     <section class="sh-result-details">
-      ${state.lastReport ? renderReportHtml(state.lastReport, Boolean(state.lastRecording?.wavBase64), drillMode, state.drillPreviousStatuses, isCaptureBusy, isPlaybackActive, isWordPlayback) : ''}
+      ${state.lastReport ? renderReportHtml(state.lastReport, Boolean(state.lastRecording?.wavBase64), drillMode, state.drillPreviousStatuses, isCaptureBusy, isPlaybackActive, isWordPlayback, weakActionHtml) : ''}
       <details class="sh-transcript-details" ${state.recognizerError ? 'open' : ''}>
         <summary>Transcript &amp; recognition details</summary>
         <div class="form-field sh-transcript-field">
@@ -660,6 +663,8 @@ export function renderShadowingView(
     </section>
     </div>
 
+    <details class="sh-translation-disclosure" id="sh-translation-disclosure">
+      <summary>Translate &amp; explain grammar</summary>
     <section class="card sh-translation-card" id="sh-translation-card">
       <div class="card-header">
         <div>
@@ -685,6 +690,7 @@ export function renderShadowingView(
       ${state.grammarResult ? `<div class="sh-translation-result sh-grammar-result" id="sh-grammar-result"><div class="form-label">Grammar explanation</div><div dir="auto">${escapeHtml(state.grammarResult).replace(/\n/g, '<br>')}</div></div>` : ''}
       ${state.translationStatus ? `<div class="status-box ${state.translationStatusType}" id="sh-translation-status" role="status" aria-live="polite">${escapeHtml(state.translationStatus)}</div>` : ''}
     </section>
+    </details>
       <details class="offline-quality-notice sh-api-capability-notice" id="sh-api-capability-notice" aria-label="Speech API capability notice" ${state.forceSpeechApiNotice ? '' : 'hidden'} ${state.forceSpeechApiNotice ? 'open' : ''}>
         <summary><strong>Speech API compatibility &amp; troubleshooting</strong></summary>
         <strong>Important: speech APIs have separate capabilities</strong>
