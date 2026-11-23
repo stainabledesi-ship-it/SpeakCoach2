@@ -504,7 +504,6 @@ export function renderShadowingView(
 
   const drillMode = Boolean(state.customDrillText);
   const drillWords = state.lastReport?.words.filter(word => word.referenceWord) ?? [];
-  const drillCorrect = drillWords.filter(word => word.status === 'match').length;
   const weakReferenceWords = [...new Set(state.lastReport?.words.filter(word => word.referenceWord && word.status !== 'match').map(word => word.referenceWord!) ?? [])];
   const remainingDrillWords = [...new Set(drillWords.filter(word => word.status !== 'match').map(word => word.referenceWord!).filter(Boolean))];
   const weakActionHtml = state.lastReport ? (drillMode
