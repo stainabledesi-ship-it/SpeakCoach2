@@ -417,8 +417,7 @@ export async function renderSettingsView(
               </div>
             </div>
             <div id="fetch-models-msg-${slotId}" style="display: none;" class="settings-fetch-models-message"></div>
-            ${isCustom ? `<p class="card-subtitle custom-model-free-text-note">Custom API model names are free text. You are not limited to the suggestions above; enter the exact model ID accepted by your API gateway. The endpoint must implement this feature's required request format.</p>` : ''}
-            ${slotId === 'voice_tts' ? `<p class="card-subtitle">This slot requires a Text-to-Speech endpoint (text → audio), normally <code>/audio/speech</code> for OpenAI-compatible APIs. A chat/completions model alone is not sufficient.</p><p class="card-subtitle">If you change the TTS provider, model, voice, or API settings, audio that has already been preloaded may still use the previous settings. Your changes will apply to audio generated or preloaded next.</p>` : ''}
+
             ${slotId === 'pronunciation_scoring' || slotId === 'ielts_stt' ? `<p class="card-subtitle">This slot requires a Speech-to-Text endpoint (audio → text), normally <code>/audio/transcriptions</code> for OpenAI-compatible APIs. A text-only chat model is not sufficient.</p>` : ''}
           </div>
 
@@ -437,6 +436,8 @@ export async function renderSettingsView(
               : ''
           }
 
+          ${isCustom ? `<p class="card-subtitle custom-model-free-text-note">Custom API model names are free text. You are not limited to the suggestions above; enter the exact model ID accepted by your API gateway. The endpoint must implement this feature's required request format.</p>` : ''}
+          ${slotId === 'voice_tts' ? `<p class="card-subtitle">This slot requires a Text-to-Speech endpoint (text → audio), normally <code>/audio/speech</code> for OpenAI-compatible APIs. A chat/completions model alone is not sufficient.</p><p class="card-subtitle">If you change the TTS provider, model, voice, or API settings, audio that has already been preloaded may still use the previous settings. Your changes will apply to audio generated or preloaded next.</p>` : ''}
           <details class="advanced-provider-settings" id="advanced-auth-${slotId}" style="${isCustom ? '' : 'display:none;'}">
             <summary>Custom provider authentication and endpoint</summary>
             <div class="advanced-provider-fields"><div class="form-field" id="custom-auth-container-${slotId}" style="${isCustom ? '' : 'display: none;'}">
@@ -508,6 +509,8 @@ export async function renderSettingsView(
                 </div>
               </div>
             </div>
+            <div class="form-field"><label class="form-label" for="secondary-key-${slotId}">API Key (${secondaryPreset?.requiresKey === false ? 'Offline — no key needed' : keyStorageLabel})</label>
+              <input type="password" class="form-input" id="secondary-key-${slotId}" value="" autocomplete="off" placeholder="${secondaryPreset?.requiresKey === false ? 'No API key needed' : secondaryKeysBySlot[slotId] ? 'API 2 key is stored securely. Leave blank to keep it, or type a replacement.' : 'Enter second API key'}" ${secondaryPreset?.requiresKey === false ? 'disabled' : ''} /></div>
             <div class="form-field settings-baseurl-field"><label class="form-label" for="secondary-baseurl-${slotId}">Base URL</label>
               <input type="url" class="form-input settings-baseurl-input" id="secondary-baseurl-${slotId}" value="${escapeHtml(slotCfg.secondary?.baseUrl || secondaryPreset?.defaultBaseUrl || '')}" placeholder="${escapeHtml(secondaryPreset?.baseUrlPlaceholder ?? 'https://api.example.com/v1')}" ${secondaryPreset?.tier === 3 ? 'disabled' : ''} />
               <div class="status-box fail settings-mismatch-warning" id="secondary-mismatch-warning-${slotId}" style="${secondaryMismatchInfo.mismatch ? '' : 'display:none;'}">
@@ -533,8 +536,7 @@ export async function renderSettingsView(
                 <div id="fetch-secondary-voices-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
               </div>
             </div>` : ''}
-            <div class="form-field"><label class="form-label" for="secondary-key-${slotId}">API Key (${secondaryPreset?.requiresKey === false ? 'Offline — no key needed' : keyStorageLabel})</label>
-              <input type="password" class="form-input" id="secondary-key-${slotId}" value="" autocomplete="off" placeholder="${secondaryPreset?.requiresKey === false ? 'No API key needed' : secondaryKeysBySlot[slotId] ? 'API 2 key is stored securely. Leave blank to keep it, or type a replacement.' : 'Enter second API key'}" ${secondaryPreset?.requiresKey === false ? 'disabled' : ''} /></div>
+
             ${secondaryCopyKeyOptionsHtml ? `
             <div class="form-field">
               <label class="form-label" for="secondary-copy-key-source-${slotId}">Or copy from</label>
