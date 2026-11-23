@@ -124,8 +124,13 @@ describe('IeltsView UI Component (Question Set Library)', () => {
     expect(container.querySelectorAll('.ielts-set-start.btn-primary')).toHaveLength(1);
     expect(container.innerHTML).toContain('Get new question sets');
     const libraryActions = container.querySelector('.ielts-library-actions');
-    expect(libraryActions?.querySelectorAll('button')).toHaveLength(1);
-    expect(libraryActions?.querySelector('button')?.id).toBe('ielts-restore-sets-btn');
+    const generationSheet = libraryActions?.querySelector<HTMLDetailsElement>('.ielts-generation-sheet');
+    expect(generationSheet).not.toBeNull();
+    expect(generationSheet?.open).toBe(false);
+    expect(generationSheet?.querySelectorAll('button')).toHaveLength(3);
+    expect(generationSheet?.querySelector('#ielts-restore-sets-btn')).not.toBeNull();
+    expect(generationSheet?.querySelector('#ielts-random-topic-btn')).not.toBeNull();
+    expect(generationSheet?.querySelector('#ielts-refresh-sets-btn')).not.toBeNull();
     const topicInput = container.querySelector<HTMLInputElement>('#ielts-topic-input');
     expect(topicInput?.placeholder).toBe('Leave blank for fully random topics.');
     expect(container.querySelector('#ielts-random-topic-btn')?.textContent).toContain('Random topic');
