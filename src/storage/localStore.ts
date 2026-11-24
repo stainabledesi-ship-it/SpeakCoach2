@@ -290,6 +290,8 @@ export async function saveSlotConnectionTestResult(
   };
   all[slotId] = entry;
   await setRawItem(CONNECTION_TESTS_KEY, JSON.stringify(all));
+  // A successful live test is the explicit recovery action for this account.
+  if (result.ok) await clearProviderAccountHealth(slotId, 'primary');
   return entry;
 }
 
