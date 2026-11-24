@@ -313,12 +313,15 @@ html[data-theme="dark"] .ielts-library-heading > div:first-child {
 }
 
 
-/* Shadowing uses a quiet, solid canvas in dark mode after the card surfaces were removed. */
+/* Shadowing: extend the same charcoal surface across the full viewport.
+   The previous rule only painted the app column, leaving a visible rectangle
+   against the page canvas on wide screens. */
 html[data-theme="dark"]:has(.shadowing-page),
 html[data-theme="dark"]:has(.shadowing-page) body,
 html[data-theme="dark"]:has(.shadowing-page) #app,
 html[data-theme="dark"]:has(.shadowing-page) .view-container {
-  background: #10251c !important;
+  background: #17191C !important;
+  background-image: none !important;
 }
 
 
@@ -330,9 +333,13 @@ html[data-theme="dark"] .ielts-library-page, html[data-theme="dark"] .ielts-sess
   background-color:var(--bg-primary);
   background-image:none !important;
 }
+html[data-theme="dark"]:has(.shadowing-page),
 html[data-theme="dark"]:has(.shadowing-page) body,
 html[data-theme="dark"]:has(.shadowing-page) #app,
-html[data-theme="dark"]:has(.shadowing-page) .view-container { background:#17191C !important; }
+html[data-theme="dark"]:has(.shadowing-page) .view-container {
+  background: #17191C !important;
+  background-image: none !important;
+}
 html[data-theme="dark"] .btn-primary { background:var(--accent); color:var(--on-accent); }
 html[data-theme="dark"] .btn-primary:hover { background:var(--accent-strong); }
 html[data-theme="dark"] .ielts-session-close { background:var(--bg-raised); color:var(--text-primary); }
