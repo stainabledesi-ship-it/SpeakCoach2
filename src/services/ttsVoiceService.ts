@@ -29,7 +29,7 @@ const OPENAI_PREBUILT_VOICES = [
   'nova', 'sage', 'shimmer', 'verse', 'marin', 'cedar'
 ];
 
-const GROQ_ORPHEUS_VOICES = ['autumn', 'diana', 'hannah', 'austin', 'daniel', 'troy', 'tara', 'leah', 'mia', 'mia', 'leo', 'mason'];
+const GROQ_ORPHEUS_VOICES = ['troy', 'hannah', 'autumn', 'diana', 'austin', 'daniel', 'fahad', 'abdullah', 'sultan', 'lulwa', 'noura', 'aisha'];
 
 const AZURE_COMMON_VOICES = [
   'en-US-JennyNeural', 'en-US-GuyNeural', 'en-US-AriaNeural',
