@@ -3,7 +3,7 @@ import { getPreset, SLOT_DEFINITIONS, SLOT_ORDER } from '../config/providers';
 import { APP_VERSION } from '../config/appVersion';
 import { checkForSpeakCoachUpdate, downloadSpeakCoachUpdate, installSpeakCoachUpdate, type SpeakCoachUpdate } from '../services/appUpdater';
 import type { AllSlotsConfig, AuthStyle, ConnectionTestResult, SlotConfig, SlotId } from '../config/types';
-import { testSlotConnection, testAndPersistSlotAccount, persistSlotAccountTestResult, testSlotAccountsSequentially, shouldPersistSlotVerification, describeConnectionTestFailure } from '../services/connectionTester';
+import { testSlotConnection, testAndPersistSlotAccount, persistSlotAccountTestResult, testSlotAccountsSequentially, describeConnectionTestFailure } from '../services/connectionTester';
 import { networkMonitor } from '../services/networkMonitor';
 import { getProviderAccountHealth } from '../services/providerHealth';
 import { isOnlineProviderVerified } from '../services/slotConnectionStatus';
@@ -418,7 +418,7 @@ export async function renderSettingsView(
             </div>
             <div id="fetch-models-msg-${slotId}" style="display: none;" class="settings-fetch-models-message"></div>
 
-            ${slotId === 'pronunciation_scoring' || slotId === 'ielts_stt' ? `<p class="card-subtitle">This slot requires a Speech-to-Text endpoint (audio → text), normally <code>/audio/transcriptions</code> for OpenAI-compatible APIs. A text-only chat model is not sufficient.</p>` : ''}
+            ${slotId === 'pronunciation_scoring' || slotId === 'ielts_stt' ? `<details class="settings-info-help"><summary aria-label="Speech to text information">i</summary><p>This slot requires a Speech-to-Text endpoint (audio → text), normally <code>/audio/transcriptions</code> for OpenAI-compatible APIs. A text-only chat model is not sufficient.</p></details>` : ''}
           </div>
 
 
@@ -484,8 +484,8 @@ export async function renderSettingsView(
             />
           </div></div>
           </details>
-          ${isCustom ? `<p class="card-subtitle custom-model-free-text-note">Custom API model names are free text. You are not limited to the suggestions above; enter the exact model ID accepted by your API gateway. The endpoint must implement this feature's required request format.</p>` : ''}
-          ${slotId === 'voice_tts' ? `<p class="card-subtitle">This slot requires a Text-to-Speech endpoint (text → audio), normally <code>/audio/speech</code> for OpenAI-compatible APIs. A chat/completions model alone is not sufficient.</p><p class="card-subtitle">If you change the TTS provider, model, voice, or API settings, audio that has already been preloaded may still use the previous settings. Your changes will apply to audio generated or preloaded next.</p>` : ''}
+          ${isCustom ? `<details class="settings-info-help"><summary aria-label="Custom model information">i</summary><p>Custom API model names are free text. Enter the exact model ID accepted by your API gateway. The endpoint must implement this feature's required request format.</p></details>` : ''}
+          ${slotId === 'voice_tts' ? `<details class="settings-info-help"><summary aria-label="Text to speech information">i</summary><p>This slot requires a Text-to-Speech endpoint (text → audio), normally <code>/audio/speech</code> for OpenAI-compatible APIs. A chat/completions model alone is not sufficient.</p><p>If you change the TTS provider, model, voice, or API settings, audio that has already been preloaded may still use the previous settings. Your changes apply to audio generated or preloaded next.</p></details>` : ''}
         </div>
 
         <section class="secondary-api-settings" aria-labelledby="secondary-api-heading-${slotId}">
@@ -1615,7 +1615,7 @@ export async function renderSettingsView(
           break;
         }
         const failed = tested.filter(item => !item.result.ok || item.result.tier === 3);
-        if (shouldPersistSlotVerification(tested, accounts.length)) {
+        if (tested.length === accounts.length) {
           const previousPrimary = await loadSlotConnectionTestResult(slotId);
           const previousSecondary = configs[slotId].secondary;
           const previousLastTest = lastTestResults.get(slotId);
@@ -1654,7 +1654,7 @@ export async function renderSettingsView(
         } else {
           notSavedSlots += 1;
           const reasons = failed.map(item => `${item.account === 'primary' ? 'API 1' : 'API 2'} (${getPreset(slotId, item.config.providerId).name}) failed: ${escapeHtml(redactKeys(describeConnectionTestFailure(item.result)))}`).join(' · ');
-          reports.push(`<li class="fail"><strong>${escapeHtml(slotTitle)}</strong>: ${tested.map(item => `${item.account === 'primary' ? 'API 1' : 'API 2'} (${getPreset(slotId, item.config.providerId).name}) FAIL`).join(' · ')}${skippedAccounts.length ? ` · ${skippedAccounts.join(' · ')}` : ''} — <strong>Not saved</strong>. No configured online account passed. ${reasons}. Previous verification snapshots were preserved; failed accounts retain their own health state.</li>`);
+          reports.push(`<li class="fail"><strong>${escapeHtml(slotTitle)}</strong>: ${tested.map(item => `${item.account === 'primary' ? 'API 1' : 'API 2'} (${getPreset(slotId, item.config.providerId).name}) FAIL`).join(' · ')}${skippedAccounts.length ? ` · ${skippedAccounts.join(' · ')}` : ''} — <strong>Not saved</strong>. Testing was incomplete, so no verification state changed. ${reasons}. Previous verification snapshots were preserved.</li>`);
         }
 
         const primaryResult = lastTestResults.get(slotId);

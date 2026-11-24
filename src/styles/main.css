@@ -4404,3 +4404,9 @@ body {
 .settings-copy-key-field > .form-label { flex:0 0 auto; white-space:nowrap; font-size:.76rem; }
 .settings-copy-key-field .settings-copy-key { flex:1 1 auto; min-width:0; }
 .settings-copy-key-field .copy-key-provider-picker .provider-picker-trigger { min-height:38px; padding:7px 10px; font-size:.8rem; }
+
+.settings-info-help { display:inline-block; margin:5px 0 8px; vertical-align:middle; }
+.settings-info-help > summary { display:grid; place-items:center; width:21px; height:21px; border:1px solid var(--border); border-radius:50%; color:var(--text-secondary); font-size:.75rem; font-weight:700; cursor:pointer; list-style:none; }
+.settings-info-help > summary::-webkit-details-marker { display:none; }
+.settings-info-help[open] { display:block; }
+.settings-info-help > p { margin:7px 0; color:var(--text-secondary); font-size:.78rem; line-height:1.45; }
