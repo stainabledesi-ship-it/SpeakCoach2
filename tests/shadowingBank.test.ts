@@ -18,7 +18,9 @@ describe('Shadowing Sentence Bank & Audio Hash Cache', () => {
   });
 
   it('provides graded shadowing sentences across easy, medium, and hard levels', () => {
-    expect(BUILTIN_SHADOWING_SENTENCES.length).toBeGreaterThanOrEqual(24);
+    expect(BUILTIN_SHADOWING_SENTENCES).toHaveLength(300);
+    expect(new Set(BUILTIN_SHADOWING_SENTENCES.map(sentence => sentence.text)).size).toBe(300);
+    expect(BUILTIN_SHADOWING_SENTENCES.every(sentence => !/[ةث™ˆھتگŒƒأ¦ٹ‘إ‹œ]/u.test(sentence.phoneticFocus))).toBe(true);
     expect(getShadowingSentencesByDifficulty('easy').length).toBeGreaterThanOrEqual(8);
     expect(getShadowingSentencesByDifficulty('medium').length).toBeGreaterThanOrEqual(8);
     expect(getShadowingSentencesByDifficulty('hard').length).toBeGreaterThanOrEqual(8);

@@ -27,7 +27,9 @@ describe('Shadowing sentence-set history', () => {
     expect(new Set(all.map(sentence => sentence.text.toLocaleLowerCase())).size).toBe(300);
     for (const difficulty of ['easy', 'medium', 'hard'] as const) {
       expect(BUILTIN_SHADOWING_SETS[difficulty]).toHaveLength(5);
+      expect(new Set(BUILTIN_SHADOWING_SETS[difficulty].map(set => set[0].topic)).size).toBe(5);
       for (const set of BUILTIN_SHADOWING_SETS[difficulty]) {
+        expect(set.every(sentence => sentence.topic === set[0].topic)).toBe(true);
         expect(set).toHaveLength(20);
         expect(new Set(set.map(sentence => sentence.text)).size).toBe(20);
         expect(set.every(sentence => sentence.text.trim().length > 0)).toBe(true);
@@ -59,7 +61,7 @@ describe('Shadowing sentence-set history', () => {
 
     const restored = await loadShadowingSetHistory();
     expect(restored.easy.activeSentenceIndex).toBe(7);
-    expect(getActiveShadowingSet(restored, 'easy').sentences[7].id).toBe('builtin-easy-set-1-8');
+    expect(getActiveShadowingSet(restored, 'easy').sentences[7].id).toBe(BUILTIN_SHADOWING_SETS.easy[0][7].id);
   });
 
   it('adds generated sets to the same history and keeps at most ten per difficulty', async () => {

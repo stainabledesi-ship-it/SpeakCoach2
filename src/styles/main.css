@@ -3058,12 +3058,12 @@ html[data-theme="dark"] .ielts-library-card .ielts-library-notice.error {
 /* Bilingual first-run setup guide */
 .setup-dialog{width:min(580px,calc(100vw - 28px));max-width:min(580px,calc(100vw - 28px));max-height:calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));padding:0;color:var(--text-primary);background:var(--bg-surface);border:1px solid var(--border);border-radius:22px;box-shadow:0 18px 70px rgba(0,0,0,.32)}
 .setup-dialog::backdrop{background:rgba(8,14,10,.68);backdrop-filter:blur(3px)}
-.setup-dialog-inner{display:flex;flex-direction:column;max-height:inherit}
+.setup-dialog-inner{display:flex;flex-direction:column;max-height:inherit;min-height:0}
 .setup-dialog-header{padding:20px 20px 12px;border-bottom:1px solid var(--border)}
 .setup-dialog-title{font-size:1.18rem;font-weight:800}
 .setup-dialog-subtitle{margin-top:5px;color:var(--text-secondary);font-size:.88rem;line-height:1.55}
-.setup-dialog-body{padding:16px 20px;overflow-y:auto;overscroll-behavior:contain}
-.setup-dialog-footer{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;padding:12px 20px max(16px,env(safe-area-inset-bottom));border-top:1px solid var(--border)}
+.setup-dialog-body{flex:1 1 auto;min-height:0;padding:16px 20px;overflow-y:auto;overscroll-behavior:contain}
+.setup-dialog-footer{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;padding:12px 20px max(16px,env(safe-area-inset-bottom));border-top:1px solid var(--border)}
 .setup-language-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
 .setup-language-option{min-height:66px;padding:14px;border:1px solid var(--border);border-radius:13px;background:var(--bg-primary);color:var(--text-primary);font:inherit;font-weight:700;cursor:pointer}
 .setup-language-option[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
@@ -4272,8 +4272,19 @@ body {
 /* Shadowing device-feedback refinements: spacing, hierarchy and centered actions. */
 .shadowing-page .sh-sentence-set-heading {
   border-bottom: 1px solid var(--border);
-  padding-bottom: 10px;
+  padding-bottom: 4px;
+  margin-bottom: 3px;
+}
+.shadowing-page .sh-sentence-set-heading h2 {
+  font-size: 1.12rem;
+  line-height: 1.2;
+}
+.shadowing-page .sh-set-guidance {
+  margin-top: 0;
   margin-bottom: 10px;
+}
+.shadowing-page .sh-history-controls {
+  margin-bottom: 22px;
 }
 .shadowing-page .sh-generate-actions { margin-top: 12px; }
 .shadowing-page .sh-history-controls {
@@ -4324,3 +4335,107 @@ body {
   width: 100%;
   margin-top: 18px;
 }
+
+
+/* Focused settings refinements: keep the source branch's original card framing. */
+.settings-accordion {
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:var(--bg-surface);
+  box-shadow:none;
+}
+.settings-accordion-summary { min-height:72px; padding:14px 16px; }
+.settings-accordion-heading .card-title { font-size:1rem; font-weight:700; line-height:1.3; }
+.settings-accordion-heading .card-subtitle { margin-top:3px; line-height:1.4; }
+.settings-accordion-content { padding:0 16px 16px; }
+.settings-accordion[open] > .settings-accordion-summary { border-bottom:1px solid var(--border); }
+.settings-accordion .form-grid { gap:14px; margin-top:14px; }
+.settings-accordion .form-field { min-width:0; }
+.settings-accordion .form-input,
+.settings-accordion .form-select,
+.settings-accordion .provider-picker-trigger { min-height:48px; border-radius:11px; }
+.settings-endpoint-guidance { display:grid; gap:6px; margin-top:12px; padding:12px; border:1px solid var(--border); border-radius:12px; background:var(--bg-elevated); }
+.settings-endpoint-guidance p { line-height:1.5; }
+.secondary-api-summary { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.secondary-api-switch-label { display:inline-flex; align-items:center; gap:10px; min-height:44px; cursor:pointer; }
+.secondary-api-switch {
+  appearance:none; -webkit-appearance:none; position:relative; display:inline-block;
+  width:48px; min-width:48px; height:28px; margin:0; padding:0;
+  border:1px solid var(--border); border-radius:999px;
+  background:var(--bg-raised); cursor:pointer; vertical-align:middle;
+  transition:background .18s ease,border-color .18s ease;
+}
+.secondary-api-switch::after {
+  content:""; position:absolute; top:3px; left:3px; width:20px; height:20px;
+  border-radius:50%; background:var(--text-muted); transition:transform .18s ease,background .18s ease;
+}
+.secondary-api-switch:checked { background:var(--accent); border-color:var(--accent); }
+.secondary-api-switch:checked::after { transform:translateX(20px); background:var(--on-accent); }
+.secondary-api-switch:focus-visible { outline:3px solid var(--accent-border); outline-offset:3px; }
+.secondary-api-switch:disabled { opacity:.55; cursor:not-allowed; }
+.ielts-session-topbar { display:grid; grid-template-columns:48px minmax(0,1fr) auto; align-items:center; gap:10px; min-height:52px; margin-bottom:14px; padding:0 2px 10px; border-bottom:1px solid var(--border); }
+.ielts-session-topbar strong { font-size:16px; font-weight:700; }
+.ielts-session-step-label { color:var(--text-muted); font-size:12px; }
+.ielts-session-close { width:48px; min-width:48px; height:48px; border:0; border-radius:50%; background:var(--bg-elevated); color:var(--text-primary); font-size:28px; cursor:pointer; }
+.ielts-session-close-placeholder { width:48px; height:48px; }
+@media(max-width:390px) {
+  .settings-accordion-summary { padding:13px 12px; gap:8px; }
+  .settings-accordion-content { padding:0 12px 14px; }
+  .secondary-api-summary { align-items:flex-start; flex-wrap:wrap; }
+  .secondary-api-switch-label { margin-left:auto; }
+  .ielts-session-topbar { grid-template-columns:44px minmax(0,1fr); }
+  .ielts-session-step-label { grid-column:2; }
+}
+
+
+/* The page root carries both classes on the same element (not nested).
+   Keep it transparent so the viewport canvas remains visually continuous. */
+[data-page="shadowing"] .shadowing-main-card,
+.shadowing-page.shadowing-main-card {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+/* Final Shadowing header and history alignment corrections. */
+.shadowing-page .sh-sentence-set-heading {
+  min-height: 0;
+  padding: 0 0 2px;
+  margin-bottom: 2px;
+}
+.shadowing-page .sh-sentence-set-heading h2 {
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+.shadowing-page .sh-set-guidance { margin-top: 0; margin-bottom: 10px; }
+.shadowing-page .sh-history-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.shadowing-page .sh-history-caption {
+  justify-self: center;
+  margin: 0;
+  text-align: center;
+}
+.shadowing-page .sh-history-position { justify-self: center; text-align: center; }
+.shadowing-page .sh-history-arrows {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.settings-copy-key-field { display:flex; align-items:center; gap:6px; min-width:0; margin-top:7px; }
+.settings-copy-key-field > .form-label { display:none; }
+.settings-copy-key-field .settings-copy-key { display:flex; align-items:center; flex:1 1 auto; min-width:0; gap:6px; }
+.settings-copy-key-field .copy-key-provider-picker { flex:1 1 auto; min-width:0; }
+.settings-copy-key-field .copy-key-provider-picker .provider-picker-trigger { width:100%; min-width:0; min-height:32px; max-height:32px; padding:4px 7px; font-size:.72rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.settings-copy-key-field .settings-copy-key-btn { flex:0 0 112px; width:112px; min-width:0; min-height:32px; padding:4px 6px; font-size:.7rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sh-exercise-heading { margin-top:18px; }
+
+.settings-info-help { display:inline-block; margin:5px 0 8px; vertical-align:middle; }
+.settings-info-help > summary { display:grid; place-items:center; width:21px; height:21px; border:1px solid var(--border); border-radius:50%; color:var(--text-secondary); font-size:.75rem; font-weight:700; cursor:pointer; list-style:none; }
+.settings-info-help > summary::-webkit-details-marker { display:none; }
+.settings-info-help[open] { display:block; }
+.settings-info-help > p { margin:7px 0; color:var(--text-secondary); font-size:.78rem; line-height:1.45; }

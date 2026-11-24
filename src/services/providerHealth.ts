@@ -115,13 +115,14 @@ export async function markProviderAccountFailure(
 ): Promise<void> {
   await hydrate();
   const { status, retryAfterMs, reason, networkFailure } = getStatus(error);
-  if ([400, 401, 403, 404].includes(status ?? -1)) {
+  if ([401, 403, 404].includes(status ?? -1)) {
     health.set(key(slotId, account), { state: 'needs-retest', reason, status, updatedAt: now });
     await persist();
     return;
   }
-  if (status === 408 || status === 429 || (status !== undefined && status >= 500) || status === 0 || networkFailure) {
-    const duration = Math.max(1000, Math.min(10 * 60 * 1000, retryAfterMs ?? 90_000));
+  // HTTP 400 is request-specific (voice/text/model parameters can vary); cool down briefly rather than requiring a manual re-test.
+  if (status === 400 || status === 408 || status === 429 || (status !== undefined && status >= 500) || status === 0 || networkFailure) {
+    const duration = Math.max(1000, Math.min(10 * 60 * 1000, retryAfterMs ?? (status === 400 ? 60_000 : 90_000)));
     health.set(key(slotId, account), {
       state: 'cooldown', reason, status, updatedAt: now, cooldownUntil: now + duration
     });

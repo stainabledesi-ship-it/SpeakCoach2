@@ -569,7 +569,9 @@ export async function testSlotConnection(
       const testPhrase = 'Hello from SpeakCoach.';
       let dataUrl = '';
 
-      if (preset.id === 'gemini_tts') {
+      if (preset.id === 'groq_tts' || preset.id === 'freetts_tts' || preset.id === 'gemini_tts') {
+        // Groq and FreeTTS must use the exact synthesis adapters used by Preview/playback:
+        // Groq requires WAV; FreeTTS requires create-job then download-file.
         const synthRes = await synthesizeOnlineNeuralAudio(
           testPhrase,
           slotConfig,

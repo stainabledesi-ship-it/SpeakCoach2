@@ -305,7 +305,7 @@ describe('HTTP Client & 3-Tier Auto-Fallback Framework', () => {
     await markSlotVerified('llm_evaluator', 'openai_compat_eval');
     expect((await resolveSlotTier(evalCfg)).tier).toBe(1);
 
-    // 5. Failed test (even with 401/503/timeout) must NOT force the slot into Tier 3
+    // 5. A failed deep test invalidates the previous PASS; stale verification must not remain active
     const failedDeepTest = await testSlotConnection(evalCfg, {
       apiKeyOverride: 'sk-test-key',
       transport: async (opts) => ({
@@ -415,7 +415,7 @@ describe('IELTS STT online tier detection', () => {
     }
   });
 
-  it.each([400, 401, 404])('moves a verified TTS account to Needs re-test after HTTP %i', async status => {
+  it.each([401, 404])('moves a verified TTS account to Needs re-test after HTTP %i', async status => {
     const config = {
       slotId: 'voice_tts' as const,
       providerId: 'openai_tts',
@@ -430,6 +430,22 @@ describe('IELTS STT online tier detection', () => {
     const resolved = await resolveSlotTier(config, { isOnline: true });
     expect(resolved.tier).toBe(3);
     expect(resolved.reason).toContain('re-test');
+  });
+
+  it('moves a verified TTS account into cooldown after HTTP 400', async () => {
+    const config = {
+      slotId: 'voice_tts' as const,
+      providerId: 'openai_tts',
+      baseUrl: 'https://api.openai.com/v1',
+      modelOrVoice: 'tts-1:alloy'
+    };
+    await saveSlotConfig(config);
+    await saveApiKey('voice_tts', 'openai_tts', 'runtime-400-key');
+    await markSlotVerified('voice_tts', 'openai_tts');
+    await markProviderAccountFailure('voice_tts', 'primary', Object.assign(new Error('HTTP 400'), { status: 400 }));
+    const resolved = await resolveSlotTier(config, { isOnline: true });
+    expect(resolved.tier).toBe(3);
+    expect(resolved.reason).toContain('cooling down');
   });
 
   it('moves a verified TTS account into cooldown after HTTP 429', async () => {

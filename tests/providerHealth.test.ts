@@ -12,11 +12,19 @@ describe('per-account provider runtime health', () => {
     await clearAllProviderAccountHealth();
   });
 
-  it.each([400, 401, 404])('marks HTTP %i as needing a connection re-test', async status => {
+  it.each([401, 404])('marks HTTP %i as needing a connection re-test', async status => {
     await markProviderAccountFailure('voice_tts', 'primary', Object.assign(new Error(`HTTP ${status}`), { status }));
     const health = await getProviderAccountHealth('voice_tts', 'primary');
     expect(health?.state).toBe('needs-retest');
     expect(health?.status).toBe(status);
+  });
+
+  it('places HTTP 400 into a short cooldown rather than requiring a manual re-test', async () => {
+    const now = 1_000_000;
+    await markProviderAccountFailure('voice_tts', 'primary', Object.assign(new Error('HTTP 400'), { status: 400 }), now);
+    const entry = await getProviderAccountHealth('voice_tts', 'primary', now + 10_000);
+    expect(entry?.state).toBe('cooldown');
+    expect(entry?.cooldownUntil).toBe(now + 60_000);
   });
 
   it('keeps primary and secondary account health independent', async () => {

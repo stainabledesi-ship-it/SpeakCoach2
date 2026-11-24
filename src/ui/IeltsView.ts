@@ -671,15 +671,10 @@ ${!isPart2
 
     container.innerHTML = `
       <section class="card ielts-session-card">
-        <div class="card-header">
-          <div class="ielts-session-heading">
-            ${state.mode.toUpperCase()} TEST SESSION
-          </div>
-          ${state.status !== 'evaluating' ? `
-          <button type="button" class="btn btn-secondary ielts-quit-button" id="ielts-cancel-test-btn">
-            Quit test
-          </button>
-          ` : ''}
+        <div class="ielts-session-topbar">
+          ${state.status !== 'evaluating' ? `<button type="button" class="ielts-session-close" id="ielts-cancel-test-btn" aria-label="Quit test" title="Quit test">×</button>` : '<span class="ielts-session-close-placeholder"></span>'}
+          <strong>${partLabel} · ${currentQNum} of ${totalQ}</strong>
+          <span class="ielts-session-step-label">${state.status === 'evaluating' ? 'Reviewing' : 'Speaking test'}</span>
         </div>
         ${contentHtml}
       </section>

@@ -4,33 +4,33 @@
 /* Night forest surfaces with lavender accent and semantic status colors. */
 html[data-theme="dark"] {
   color-scheme: dark;
-  --bg-primary: #111814;
-  --bg-surface: #17211B;
-  --bg-elevated: #202B24;
-  --bg-raised: #29352E;
-  --text-primary: #E2E8E3;
-  --text-secondary: #B8C0BA;
-  --text-muted: #9EA7A1;
-  --accent: #B4AFEE;
-  --accent-strong: #C1BBFC;
-  --accent-soft: rgba(180,175,238,.12);
-  --accent-border: rgba(180,175,238,.55);
-  --accent-shadow: rgba(180,175,238,.18);
-  --primary: #B4AFEE;
-  --on-accent: #0C1711;
-  --success: #88D1A2;
-  --success-bg: rgba(136,209,162,.15);
-  --warning: #E2C479;
-  --warning-bg: rgba(226,196,121,.14);
-  --danger: #F08695;
-  --danger-bg: rgba(240,134,149,.14);
-  --neutral-chip: #A2B1B8;
-  --border: #2F3933;
-  --record-bg: #B4233C;
-  --record-bg-hover: #951B31;
-  --record-border: #951B31;
-  --record-disabled-bg: #7E1B2F;
-  --record-text: #FFFFFF;
+  --bg-primary: #121316;
+  --bg-surface: #1A1C21;
+  --bg-elevated: #23262E;
+  --bg-raised: #23262E;
+  --text-primary: #ECEEF2;
+  --text-secondary: #9BA1B0;
+  --text-muted: #858B9A;
+  --accent: #7B93F5;
+  --accent-strong: #637CE6;
+  --accent-soft: rgba(123,147,245,.14);
+  --accent-border: rgba(123,147,245,.62);
+  --accent-shadow: rgba(123,147,245,.18);
+  --primary: #7B93F5;
+  --on-accent: #0F1115;
+  --success: #5EC29A;
+  --success-bg: rgba(94,194,154,.14);
+  --warning: #EAB665;
+  --warning-bg: rgba(234,182,101,.14);
+  --danger: #EB7373;
+  --danger-bg: rgba(235,115,115,.14);
+  --neutral-chip: #9BA1B0;
+  --border: #2E323C;
+  --record-bg: #EB7373;
+  --record-bg-hover: #D85F68;
+  --record-border: #D85F68;
+  --record-disabled-bg: #63383D;
+  --record-text: #0F1115;
 }
 html, body { background: var(--bg-primary); color: var(--text-primary); }
 body {
@@ -313,10 +313,33 @@ html[data-theme="dark"] .ielts-library-heading > div:first-child {
 }
 
 
-/* Shadowing uses a quiet, solid canvas in dark mode after the card surfaces were removed. */
+/* Shadowing: extend the same charcoal surface across the full viewport.
+   The previous rule only painted the app column, leaving a visible rectangle
+   against the page canvas on wide screens. */
 html[data-theme="dark"]:has(.shadowing-page),
 html[data-theme="dark"]:has(.shadowing-page) body,
 html[data-theme="dark"]:has(.shadowing-page) #app,
 html[data-theme="dark"]:has(.shadowing-page) .view-container {
-  background: #10251c !important;
+  background:#17191C !important;
+  background-image: none !important;
 }
+
+
+/* Plain charcoal dark canvas; original cards and component frames remain intact. */
+html[data-theme="dark"], html[data-theme="dark"] body,
+html[data-theme="dark"] #app, html[data-theme="dark"] .view-container,
+html[data-theme="dark"] .settings-page, html[data-theme="dark"] .shadowing-page,
+html[data-theme="dark"] .ielts-library-page, html[data-theme="dark"] .ielts-session-card {
+  background-color:var(--bg-primary);
+  background-image:none !important;
+}
+html[data-theme="dark"]:has(.shadowing-page),
+html[data-theme="dark"]:has(.shadowing-page) body,
+html[data-theme="dark"]:has(.shadowing-page) #app,
+html[data-theme="dark"]:has(.shadowing-page) .view-container {
+  background:#17191C !important;
+  background-image: none !important;
+}
+html[data-theme="dark"] .btn-primary { background:var(--accent); color:var(--on-accent); }
+html[data-theme="dark"] .btn-primary:hover { background:var(--accent-strong); }
+html[data-theme="dark"] .ielts-session-close { background:var(--bg-raised); color:var(--text-primary); }

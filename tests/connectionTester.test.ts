@@ -675,4 +675,52 @@ describe('Functional Deep Connection Tester', () => {
     expect(result.message).toContain('HTTP 401');
   });
 
+
+  it('tests Groq TTS through the same WAV request used by playback', async () => {
+    const result = await testSlotConnection({
+      slotId: 'voice_tts', providerId: 'groq_tts',
+      baseUrl: 'https://api.groq.com/openai/v1',
+      modelOrVoice: 'canopylabs/orpheus-v1-english',
+      customTtsVoice: 'hannah'
+    }, {
+      apiKeyOverride: 'groq-tts-key',
+      transport: async opts => {
+        expect(opts.url).toBe('https://api.groq.com/openai/v1/audio/speech');
+        expect(opts.headers?.Authorization).toBe('Bearer groq-tts-key');
+        expect(opts.data).toMatchObject({
+          model: 'canopylabs/orpheus-v1-english',
+          voice: 'hannah', input: 'Hello from SpeakCoach.', response_format: 'wav'
+        });
+        return { url: opts.url, status: 200, headers: {}, data: 'UklGRiQAAABX' };
+      }
+    });
+    expect(result.ok).toBe(true);
+  });
+
+  it('tests FreeTTS through its create-and-download API flow', async () => {
+    let calls = 0;
+    const result = await testSlotConnection({
+      slotId: 'voice_tts', providerId: 'freetts_tts',
+      baseUrl: 'https://freetts.org',
+      modelOrVoice: '',
+      customTtsVoice: 'en-US-JennyNeural'
+    }, {
+      apiKeyOverride: 'free-tts-key',
+      transport: async opts => {
+        calls++;
+        if (calls === 1) {
+          expect(opts.url).toBe('https://freetts.org/api/v1/tts');
+          expect(opts.headers?.['x-api-key']).toBe('free-tts-key');
+          expect(opts.data).toMatchObject({ text: 'Hello from SpeakCoach.', voice: 'en-US-JennyNeural', output_format: 'mp3' });
+          return { url: opts.url, status: 200, headers: {}, data: { file_id: 'file-123' } };
+        }
+        expect(opts.url).toBe('https://freetts.org/api/audio/file-123');
+        expect(opts.method).toBe('GET');
+        return { url: opts.url, status: 200, headers: {}, data: 'SUQzBAAAAAAA' };
+      }
+    });
+    expect(calls).toBe(2);
+    expect(result.ok).toBe(true);
+  });
+
 });

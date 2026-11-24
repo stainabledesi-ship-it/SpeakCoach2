@@ -3,7 +3,7 @@ import { getPreset, SLOT_DEFINITIONS, SLOT_ORDER } from '../config/providers';
 import { APP_VERSION } from '../config/appVersion';
 import { checkForSpeakCoachUpdate, downloadSpeakCoachUpdate, installSpeakCoachUpdate, type SpeakCoachUpdate } from '../services/appUpdater';
 import type { AllSlotsConfig, AuthStyle, ConnectionTestResult, SlotConfig, SlotId } from '../config/types';
-import { testSlotConnection, testAndPersistSlotAccount, persistSlotAccountTestResult, testSlotAccountsSequentially, shouldPersistSlotVerification, describeConnectionTestFailure } from '../services/connectionTester';
+import { testSlotConnection, testAndPersistSlotAccount, persistSlotAccountTestResult, testSlotAccountsSequentially, describeConnectionTestFailure } from '../services/connectionTester';
 import { networkMonitor } from '../services/networkMonitor';
 import { getProviderAccountHealth } from '../services/providerHealth';
 import { isOnlineProviderVerified } from '../services/slotConnectionStatus';
@@ -135,8 +135,18 @@ export async function renderSettingsView(
     });
   }
 
+  const slotDisplayCopy: Record<SlotId, { title: string; purpose: string }> = {
+    voice_tts: { title: 'Voice', purpose: 'Speak sentences and examiner questions' },
+    pronunciation_scoring: { title: 'Shadowing feedback', purpose: 'Check spoken words and timing' },
+    ielts_stt: { title: 'Speech recognition', purpose: 'Turn IELTS answers into text' },
+    llm_evaluator: { title: 'Smart scoring', purpose: 'Evaluate IELTS answers and give feedback' },
+    llm_generator: { title: 'Question generator', purpose: 'Create practice questions and sentences' },
+    llm_translation: { title: 'Translation & grammar', purpose: 'Translate and explain the current sentence' }
+  };
+
   const cardsHtml = SLOT_ORDER.map((slotId) => {
     const def = SLOT_DEFINITIONS[slotId];
+    const displayCopy = slotDisplayCopy[slotId];
     const slotCfg = configs[slotId];
     const preset = getPreset(slotId, slotCfg.providerId);
     const resolved = summary.slots[slotId];
@@ -295,8 +305,8 @@ export async function renderSettingsView(
       <details class="card settings-accordion" data-slot-card="${slotId}">
         <summary class="settings-accordion-summary">
           <span class="settings-accordion-heading">
-            <span class="card-title">${escapeHtml(def.title)}</span>
-            <span class="card-subtitle">${escapeHtml(def.subtitle)}</span>
+            <span class="card-title">${escapeHtml(displayCopy.title)}</span>
+            <span class="card-subtitle">${escapeHtml(displayCopy.purpose)}</span>
           </span>
           <span class="settings-accordion-meta">
             <span class="tier-badge ${badgeClass} settings-slot-status" id="badge-${slotId}" data-slot-status="${slotStatus}">
@@ -319,7 +329,7 @@ export async function renderSettingsView(
                 <span>${escapeHtml(preset.name)}</span><span class="provider-picker-chevron">⌄</span>
               </button>
               <div class="provider-picker-options" id="provider-options-${slotId}" hidden>
-                <p class="card-subtitle provider-picker-help">After selecting a provider and adding its API key, tap <strong>Test API 1</strong> below. Wait for a successful result before using online features. Test API 2 separately for a secondary provider.</p>
+                <details class="settings-info-help"><summary aria-label="Provider setup information">i</summary><p>After selecting a provider and adding its API key, tap <strong>Test API 1</strong> below. Wait for a successful result before using online features. Test API 2 separately for a secondary provider.</p></details>
                 ${def.providers.map((p) => `<button type="button" class="provider-picker-option ${p.id === preset.id ? 'active' : ''}" data-provider-id="${escapeHtml(p.id)}" ${((slotId === 'llm_evaluator' || slotId === 'llm_translation') && p.tier === 3) ? 'disabled' : ''}>${escapeHtml(p.name)}</button>`).join('')}
               </div>
             </div>
@@ -368,18 +378,18 @@ export async function renderSettingsView(
             />
             ${preset.requiresKey && copyKeyOptionsHtml ? `
               <div class="settings-copy-key-field">
-                <label class="form-label" for="copy-key-source-${slotId}">Or copy from</label>
+                
                 <select class="form-select provider-native-select" id="copy-key-source-${slotId}" aria-hidden="true" tabindex="-1">${copyKeyOptionsHtml}</select>
                 <div class="settings-copy-key">
                   <div class="provider-picker copy-key-provider-picker" id="copy-key-picker-${slotId}">
                     <button type="button" class="provider-picker-trigger" id="copy-key-trigger-${slotId}" aria-expanded="false"><span>${escapeHtml(copyKeySources[0]?.label ?? 'Choose source')}</span><span class="provider-picker-chevron">⌄</span></button>
                     <div class="provider-picker-options" id="copy-key-options-${slotId}" hidden>${copyKeyPickerOptionsHtml}</div>
                   </div>
-                  <button type="button" class="btn btn-secondary settings-copy-key-btn" id="copy-key-btn-${slotId}">Copy API key</button>
+                  <button type="button" class="btn btn-secondary settings-copy-key-btn" id="copy-key-btn-${slotId}">Or copy API key</button>
                 </div>
               </div>` : ''}
           </div>
-          <div class="form-field">
+          <div class="form-field" id="model-field-${slotId}" style="${preset.id === 'freetts_tts' ? 'display:none;' : ''}">
             <div class="settings-field-heading">
               <label class="form-label settings-field-label" for="model-${slotId}">
                 ${escapeHtml(preset.modelFieldLabel)}
@@ -407,18 +417,20 @@ export async function renderSettingsView(
               </div>
             </div>
             <div id="fetch-models-msg-${slotId}" style="display: none;" class="settings-fetch-models-message"></div>
-            ${isCustom ? `<p class="card-subtitle custom-model-free-text-note">Custom API model names are free text. You are not limited to the suggestions above; enter the exact model ID accepted by your API gateway. The endpoint must implement this feature's required request format.</p>` : ''}
-            ${slotId === 'voice_tts' ? `<p class="card-subtitle">This slot requires a Text-to-Speech endpoint (text → audio), normally <code>/audio/speech</code> for OpenAI-compatible APIs. A chat/completions model alone is not sufficient.</p><p class="card-subtitle">If you change the TTS provider, model, voice, or API settings, audio that has already been preloaded may still use the previous settings. Your changes will apply to audio generated or preloaded next.</p>` : ''}
-            ${slotId === 'pronunciation_scoring' || slotId === 'ielts_stt' ? `<p class="card-subtitle">This slot requires a Speech-to-Text endpoint (audio → text), normally <code>/audio/transcriptions</code> for OpenAI-compatible APIs. A text-only chat model is not sufficient.</p>` : ''}
+
+            ${slotId === 'pronunciation_scoring' || slotId === 'ielts_stt' ? `<details class="settings-info-help"><summary aria-label="Speech to text information">i</summary><p>This slot requires a Speech-to-Text endpoint (audio → text), normally <code>/audio/transcriptions</code> for OpenAI-compatible APIs. A text-only chat model is not sufficient.</p></details>` : ''}
           </div>
+
+
 
           ${
             slotId === 'voice_tts'
               ? `<div class="form-field" id="tts-voice-container-${slotId}" style="${showVoiceInput ? '' : 'display: none;'}">
                   <label class="form-label" for="custom-voice-${slotId}">Voice (choose from the available list or enter a custom name)</label>
-                  <input type="text" class="form-input" id="custom-voice-${slotId}" value="${escapeHtml(slotCfg.customTtsVoice ?? '')}" placeholder="Choose or enter a voice name" autocomplete="off" />
+                  <input type="text" class="form-input" id="custom-voice-${slotId}" value="${escapeHtml(slotCfg.customTtsVoice ?? '')}" placeholder="${preset.id === 'freetts_tts' ? 'en-US-JennyNeural' : preset.id === 'groq_tts' ? 'troy' : 'Choose or enter a voice name'}" autocomplete="off" />
+                  ${preset.id === 'groq_tts' ? '<details class="settings-info-help"><summary aria-label="Groq voice information">i</summary><p>English voices: troy, hannah, autumn, diana, austin, daniel. Arabic Saudi voices: fahad, abdullah, sultan, lulwa, noura, aisha. Orpheus accepts up to 200 characters per request.</p></details>' : ''}
                   <div class="voice-picker-dropdown">
-                    <div class="btn-row"><button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-voices-btn-${slotId}">Load available voices</button><button type="button" class="btn btn-secondary" id="preview-voice-btn-${slotId}">Preview voice</button></div>
+                    <div class="btn-row"><button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-voices-btn-${slotId}" >Load available voices</button><button type="button" class="btn btn-secondary" id="preview-voice-btn-${slotId}">Preview voice</button></div>
                     <div class="model-picker-options" id="voices-list-${slotId}" hidden></div>
                     <div id="preview-voice-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
                     <div id="fetch-voices-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
@@ -426,6 +438,7 @@ export async function renderSettingsView(
                 </div>`
               : ''
           }
+
 
           <details class="advanced-provider-settings" id="advanced-auth-${slotId}" style="${isCustom ? '' : 'display:none;'}">
             <summary>Custom provider authentication and endpoint</summary>
@@ -471,6 +484,8 @@ export async function renderSettingsView(
             />
           </div></div>
           </details>
+          ${isCustom ? `<details class="settings-info-help"><summary aria-label="Custom model information">i</summary><p>Custom API model names are free text. Enter the exact model ID accepted by your API gateway. The endpoint must implement this feature's required request format.</p></details>` : ''}
+          ${slotId === 'voice_tts' ? `<details class="settings-info-help"><summary aria-label="Text to speech information">i</summary><p>This slot requires a Text-to-Speech endpoint (text → audio), normally <code>/audio/speech</code> for OpenAI-compatible APIs. A chat/completions model alone is not sufficient.</p><p>If you change the TTS provider, model, voice, or API settings, audio that has already been preloaded may still use the previous settings. Your changes apply to audio generated or preloaded next.</p></details>` : ''}
         </div>
 
         <section class="secondary-api-settings" aria-labelledby="secondary-api-heading-${slotId}">
@@ -482,7 +497,7 @@ export async function renderSettingsView(
             </label>
           </div>
           <div class="secondary-api-content" id="secondary-api-content-${slotId}" ${slotCfg.secondary ? '' : 'hidden'}>
-          <p class="card-subtitle secondary-api-help">Configure another provider/account and key. Speech recognition may rotate between verified APIs. API 2 is not guaranteed to be a different model or service: if you use the same gateway, model, or endpoint in both accounts, you may have no independent fallback. Check that each account supports the required operation (TTS: text → audio; STT: audio → text).</p>
+          <details class="settings-info-help"><summary aria-label="API 2 setup information">i</summary><p>Configure another provider/account and key. Speech recognition may rotate between verified APIs. API 2 is not guaranteed to be a different model or service: if you use the same gateway, model, or endpoint in both accounts, you may have no independent fallback. Check that each account supports the required operation (TTS: text → audio; STT: audio → text).</p></details>
           ${secondarySameModelAsPrimary ? `<div class="status-box info" role="note"><strong>API 2 uses the same provider and model as API 1.</strong> It may still have a separate key or quota, but it is not a different model or an independent model capability.</div>` : ''}
           <div class="form-grid">
             <div class="form-field"><label class="form-label" for="secondary-provider-${slotId}">Provider</label>
@@ -498,45 +513,47 @@ export async function renderSettingsView(
                 </div>
               </div>
             </div>
+
             <div class="form-field settings-baseurl-field"><label class="form-label" for="secondary-baseurl-${slotId}">Base URL</label>
               <input type="url" class="form-input settings-baseurl-input" id="secondary-baseurl-${slotId}" value="${escapeHtml(slotCfg.secondary?.baseUrl || secondaryPreset?.defaultBaseUrl || '')}" placeholder="${escapeHtml(secondaryPreset?.baseUrlPlaceholder ?? 'https://api.example.com/v1')}" ${secondaryPreset?.tier === 3 ? 'disabled' : ''} />
               <div class="status-box fail settings-mismatch-warning" id="secondary-mismatch-warning-${slotId}" style="${secondaryMismatchInfo.mismatch ? '' : 'display:none;'}">
                 <div id="secondary-mismatch-warning-text-${slotId}" class="settings-mismatch-copy">${escapeHtml(secondaryMismatchInfo.reason ?? '')}</div>
                 <button type="button" class="btn btn-secondary settings-switch-custom-btn" id="secondary-switch-custom-btn-${slotId}">Switch to Custom (OpenAI-compatible)</button>
               </div></div>
-            <div class="form-field">
+            <div class="form-field"><label class="form-label" for="secondary-key-${slotId}">API Key (${secondaryPreset?.requiresKey === false ? 'Offline — no key needed' : keyStorageLabel})</label>
+              <input type="password" class="form-input" id="secondary-key-${slotId}" value="" autocomplete="off" placeholder="${secondaryPreset?.requiresKey === false ? 'No API key needed' : secondaryKeysBySlot[slotId] ? 'API 2 key is stored securely. Leave blank to keep it, or type a replacement.' : 'Enter second API key'}" ${secondaryPreset?.requiresKey === false ? 'disabled' : ''} /></div>
+            <div class="form-field" id="secondary-model-field-${slotId}" style="${secondaryPreset?.id === 'freetts_tts' ? 'display:none;' : ''}">
               <div class="settings-field-heading">
                 <label class="form-label" for="secondary-model-${slotId}">${escapeHtml(secondaryPreset?.modelFieldLabel ?? "Model / voice")}</label>
                 <button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-secondary-models-btn-${slotId}">Fetch models</button>
               </div>
               <input type="text" class="form-input" id="secondary-model-${slotId}" value="${escapeHtml(slotCfg.secondary?.modelOrVoice ?? '')}" placeholder="${escapeHtml(secondaryPreset?.defaultModelOrVoice ?? 'Model name')}" />
-              ${secondaryIsCustom ? `<p class="card-subtitle">Custom API 2 model ID is free text; suggestions do not limit what you can enter. Use the exact ID and audio endpoint supported by that gateway.</p>` : ''}
+              ${secondaryIsCustom ? `<details class="settings-info-help"><summary aria-label="Custom API 2 model information">i</summary><p>Custom API 2 model ID is free text; suggestions do not limit what you can enter. Use the exact ID and audio endpoint supported by that gateway.</p></details>` : ''}
               <div class="model-picker-dropdown"><button type="button" class="model-picker-trigger" aria-expanded="false">Browse available models</button><div class="model-picker-options" id="secondary-models-list-${slotId}" hidden>${secondarySuggestions.map((model) => `<button type="button" class="model-option" data-model-value="${escapeHtml(model)}">${escapeHtml(model)}</button>`).join("")}</div></div><div id="fetch-secondary-models-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
             </div>
+
             ${slotId === 'voice_tts' ? `<div class="form-field" id="secondary-tts-voice-container-${slotId}" style="${secondaryPreset && secondaryPreset.id !== 'android_native_tts' ? '' : 'display:none;'}">
               <label class="form-label" for="secondary-custom-voice-${slotId}">API 2 voice (choose from the available list or enter a custom name)</label>
-              <input type="text" class="form-input" id="secondary-custom-voice-${slotId}" value="${escapeHtml(slotCfg.secondary?.customTtsVoice ?? '')}" placeholder="Choose or enter a voice name" autocomplete="off" />
+              <input type="text" class="form-input" id="secondary-custom-voice-${slotId}" value="${escapeHtml(slotCfg.secondary?.customTtsVoice ?? '')}" placeholder="${secondaryPreset?.id === 'freetts_tts' ? 'en-US-JennyNeural' : secondaryPreset?.id === 'groq_tts' ? 'troy' : 'Choose or enter a voice name'}" autocomplete="off" />
               <div class="voice-picker-dropdown">
-                <div class="btn-row"><button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-secondary-voices-btn-${slotId}">Load available voices</button><button type="button" class="btn btn-secondary" id="preview-secondary-voice-btn-${slotId}">Preview voice</button></div>
+                <div class="btn-row"><button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-secondary-voices-btn-${slotId}" >Load available voices</button><button type="button" class="btn btn-secondary" id="preview-secondary-voice-btn-${slotId}">Preview voice</button></div>
                 <div class="model-picker-options" id="secondary-voices-list-${slotId}" hidden></div>
                 <div id="preview-secondary-voice-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
                 <div id="fetch-secondary-voices-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
               </div>
             </div>` : ''}
-            <div class="form-field"><label class="form-label" for="secondary-key-${slotId}">API Key (${secondaryPreset?.requiresKey === false ? 'Offline — no key needed' : keyStorageLabel})</label>
-              <input type="password" class="form-input" id="secondary-key-${slotId}" value="" autocomplete="off" placeholder="${secondaryPreset?.requiresKey === false ? 'No API key needed' : secondaryKeysBySlot[slotId] ? 'API 2 key is stored securely. Leave blank to keep it, or type a replacement.' : 'Enter second API key'}" ${secondaryPreset?.requiresKey === false ? 'disabled' : ''} /></div>
+
             ${secondaryCopyKeyOptionsHtml ? `
-            <div class="form-field">
-              <label class="form-label" for="secondary-copy-key-source-${slotId}">Or copy from</label>
+            <div class="settings-copy-key-field">
               <div class="settings-copy-key">
                 <select class="form-select provider-native-select" id="secondary-copy-key-source-${slotId}" aria-hidden="true" tabindex="-1">${secondaryCopyKeyOptionsHtml}</select>
                 <div class="provider-picker copy-key-provider-picker" id="secondary-copy-key-picker-${slotId}">
                   <button type="button" class="provider-picker-trigger" id="secondary-copy-key-trigger-${slotId}" aria-expanded="false"><span>${escapeHtml(secondaryCopyKeySources[0]?.label ?? 'Choose source')}</span><span class="provider-picker-chevron">⌄</span></button>
                   <div class="provider-picker-options" id="secondary-copy-key-options-${slotId}" hidden>${secondaryCopyKeyPickerOptionsHtml}</div>
                 </div>
-                <button type="button" class="btn btn-secondary settings-copy-key-btn" id="secondary-copy-key-btn-${slotId}">Copy API key</button>
+                <button type="button" class="btn btn-secondary settings-copy-key-btn" id="secondary-copy-key-btn-${slotId}">Or copy API key</button>
               </div>
-              <p class="card-subtitle">You can copy an API 1 or API 2 key from another capability slot.</p>
+              
             </div>` : ''}
             <details class="advanced-provider-settings" id="secondary-custom-auth-container-${slotId}" style="${secondaryIsCustom ? '' : 'display:none;'}">
               <summary>Advanced authentication & endpoint</summary>
@@ -612,7 +629,7 @@ export async function renderSettingsView(
         </button>
         <div class="quick-setup-panel" id="quick-setup-panel" hidden>
           <p class="card-subtitle">For the best experience, we recommend configuring the providers manually in API Settings below. If you use free API plans, separate accounts may help distribute legitimate usage where the provider's terms allow it.</p>
-          <p class="card-subtitle">Quick Setup assigns Google Gemini as the default provider for most features and Groq as the backup. IELTS Evaluator uses Groq first with Gemini as backup. Voice/TTS uses Gemini because Groq has no compatible TTS preset here. Both keys are optional if already stored; missing keys leave that provider unverified.</p>
+          <p class="card-subtitle">Quick Setup assigns Google Gemini as the default provider for most features and Groq as the backup. IELTS Evaluator uses Groq first with Gemini as backup. Voice/TTS can also use Groq Orpheus (WAV) when selected manually; Quick Setup keeps Gemini as the default. Both keys are optional if already stored; missing keys leave that provider unverified.</p>
           <ul class="quick-setup-links">
             <li><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Get a Google Gemini API key</a></li>
             <li><a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">Get a Groq API key</a></li>
@@ -627,7 +644,7 @@ export async function renderSettingsView(
               <input type="password" class="form-input" id="quick-setup-groq-key" autocomplete="off" placeholder="Paste Groq key (optional)" />
             </div>
           </div>
-          <p class="card-subtitle">Quick Setup fills API 1 and API 2 for all compatible features. API 2 is the fallback. Voice/TTS has no compatible Groq backup. Connection checks run sequentially.</p>
+          <p class="card-subtitle">Quick Setup fills API 1 and API 2 for all compatible features. API 2 is the fallback. Groq Orpheus is available as an optional Voice/TTS provider, but is not selected automatically. Connection checks run sequentially.</p>
           <div class="btn-row">
             <button type="button" class="btn btn-primary" id="quick-setup-run-btn">Set up recommended providers</button>
           </div>
@@ -1597,7 +1614,7 @@ export async function renderSettingsView(
           break;
         }
         const failed = tested.filter(item => !item.result.ok || item.result.tier === 3);
-        if (shouldPersistSlotVerification(tested, accounts.length)) {
+        if (tested.length === accounts.length) {
           const previousPrimary = await loadSlotConnectionTestResult(slotId);
           const previousSecondary = configs[slotId].secondary;
           const previousLastTest = lastTestResults.get(slotId);
@@ -1636,7 +1653,7 @@ export async function renderSettingsView(
         } else {
           notSavedSlots += 1;
           const reasons = failed.map(item => `${item.account === 'primary' ? 'API 1' : 'API 2'} (${getPreset(slotId, item.config.providerId).name}) failed: ${escapeHtml(redactKeys(describeConnectionTestFailure(item.result)))}`).join(' · ');
-          reports.push(`<li class="fail"><strong>${escapeHtml(slotTitle)}</strong>: ${tested.map(item => `${item.account === 'primary' ? 'API 1' : 'API 2'} (${getPreset(slotId, item.config.providerId).name}) FAIL`).join(' · ')}${skippedAccounts.length ? ` · ${skippedAccounts.join(' · ')}` : ''} — <strong>Not saved</strong>. No configured online account passed. ${reasons}. Previous verification snapshots were preserved; failed accounts retain their own health state.</li>`);
+          reports.push(`<li class="fail"><strong>${escapeHtml(slotTitle)}</strong>: ${tested.map(item => `${item.account === 'primary' ? 'API 1' : 'API 2'} (${getPreset(slotId, item.config.providerId).name}) FAIL`).join(' · ')}${skippedAccounts.length ? ` · ${skippedAccounts.join(' · ')}` : ''} — <strong>Not saved</strong>. Testing was incomplete, so no verification state changed. ${reasons}. Previous verification snapshots were preserved.</li>`);
         }
 
         const primaryResult = lastTestResults.get(slotId);
@@ -1782,6 +1799,19 @@ export async function renderSettingsView(
         option.classList.toggle('active', option.dataset.providerId === selected.id);
       });
       closeProviderPicker();
+      const modelField = modelInput?.closest<HTMLElement>('.form-field');
+      if (modelField) modelField.style.display = selected.id === 'freetts_tts' ? 'none' : '';
+      if (baseUrlInput && selected.id !== configs[slotId].providerId) baseUrlInput.value = selected.defaultBaseUrl;
+      if (modelInput && selected.id !== configs[slotId].providerId) modelInput.value = selected.defaultModelOrVoice;
+      const voiceContainer = container.querySelector<HTMLElement>(`#tts-voice-container-${slotId}`);
+      if (voiceContainer) voiceContainer.style.display = selected.id === 'android_native_tts' ? 'none' : '';
+      const fetchVoices = container.querySelector<HTMLButtonElement>(`#fetch-voices-btn-${slotId}`);
+      if (fetchVoices) fetchVoices.style.display = '';
+      const voiceInput = container.querySelector<HTMLInputElement>(`#custom-voice-${slotId}`);
+      if (voiceInput) {
+        voiceInput.value = '';
+        voiceInput.placeholder = selected.id === 'freetts_tts' ? 'en-US-JennyNeural' : selected.id === 'groq_tts' ? 'troy' : 'Choose or enter a voice name';
+      }
     });
 
     const renderModelOptions = (models: string[]): void => {
@@ -2234,6 +2264,11 @@ export async function renderSettingsView(
       }
       const selectedPreset = getPreset(slotId, selected);
       renderSecondaryModelOptions(selectedPreset.modelSuggestions || [selectedPreset.defaultModelOrVoice]);
+      const secondaryModelField = container.querySelector<HTMLElement>(`#secondary-model-field-${slotId}`);
+      if (secondaryModelField) secondaryModelField.style.display = selectedPreset.id === 'freetts_tts' ? 'none' : '';
+      if (fetchSecondaryModelsBtn) fetchSecondaryModelsBtn.style.display = selectedPreset.id === 'freetts_tts' ? 'none' : '';
+      const secondaryFetchVoices = container.querySelector<HTMLButtonElement>(`#fetch-secondary-voices-btn-${slotId}`);
+      if (secondaryFetchVoices) secondaryFetchVoices.style.display = selectedPreset.id === 'groq_tts' || selectedPreset.id === 'freetts_tts' ? 'none' : '';
       const secondaryCustomAuthContainer = container.querySelector<HTMLElement>(`#secondary-custom-auth-container-${slotId}`);
       if (secondaryCustomAuthContainer) secondaryCustomAuthContainer.style.display = selectedPreset.id.startsWith('custom_openai_') ? '' : 'none';
       if (secondaryKeyInput) secondaryKeyInput.disabled = !selectedPreset.requiresKey;

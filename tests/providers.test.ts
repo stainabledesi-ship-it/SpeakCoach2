@@ -26,6 +26,16 @@ describe('Provider Slots Configuration & Storage', () => {
     }
   });
 
+  it('offers Groq WAV TTS and FreeTTS REST TTS without a model selector', () => {
+    const groq = getPreset('voice_tts', 'groq_tts');
+    const free = getPreset('voice_tts', 'freetts_tts');
+    expect(groq.defaultBaseUrl).toBe('https://api.groq.com/openai/v1');
+    expect(groq.defaultModelOrVoice).toBe('canopylabs/orpheus-v1-english');
+    expect(free.defaultBaseUrl).toBe('https://freetts.org');
+    expect(free.defaultModelOrVoice).toBe('');
+    expect(free.modelSuggestions).toEqual([]);
+  });
+
   it('normalizes trailing slashes from custom base URLs', () => {
     expect(normalizeBaseUrl('https://my-proxy.example.com/v1///')).toBe('https://my-proxy.example.com/v1');
     expect(normalizeBaseUrl('  https://api.openai.com/v1/  ')).toBe('https://api.openai.com/v1');
