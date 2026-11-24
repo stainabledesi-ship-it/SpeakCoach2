@@ -212,11 +212,10 @@ export async function loadAllSlotsConfig(): Promise<AllSlotsConfig> {
 
 export async function saveSlotConfig(config: SlotConfig): Promise<AllSlotsConfig> {
   const all = await loadAllSlotsConfig();
+  const previousPrimary = all[config.slotId];
   const sanitized = sanitizeSlotConfig(config.slotId, config);
   all[config.slotId] = sanitized;
   await setRawItem(SLOTS_CONFIG_KEY, JSON.stringify(all));
-  const previous = await loadAllSlotsConfig();
-  const previousPrimary = previous[config.slotId];
   const primaryChanged = JSON.stringify({ ...previousPrimary, secondary: undefined }) !== JSON.stringify({ ...sanitized, secondary: undefined });
   if (primaryChanged) {
     clearSlotRuntimeFailure(config.slotId);
@@ -231,10 +230,10 @@ export async function saveSecondarySlotConfig(
   secondary: SlotConfig['secondary']
 ): Promise<void> {
   const all = await loadAllSlotsConfig();
+  const previousSecondary = all[slotId].secondary;
   all[slotId] = sanitizeSlotConfig(slotId, { ...all[slotId], secondary });
   await setRawItem(SLOTS_CONFIG_KEY, JSON.stringify(all));
-  const previousSecondary = all[slotId].secondary;
-  const secondaryChanged = JSON.stringify(previousSecondary ?? null) !== JSON.stringify(sanitized[slotId].secondary ?? null);
+  const secondaryChanged = JSON.stringify(previousSecondary ?? null) !== JSON.stringify(all[slotId].secondary ?? null);
   if (secondaryChanged) {
     clearSlotRuntimeFailure(slotId);
     await clearProviderAccountHealth(slotId, 'secondary');
