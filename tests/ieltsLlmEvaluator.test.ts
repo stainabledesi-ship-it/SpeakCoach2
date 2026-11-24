@@ -17,7 +17,7 @@ import { clearIeltsSessionLogs, getIeltsSessionLogs } from '../src/services/ielt
 import { generateIeltsSessionPlan } from './fixtures/legacyIeltsQuestionBank';
 import { networkMonitor } from '../src/services/networkMonitor';
 import { clearAllRuntimeFailures } from '../src/services/tierManager';
-import { createProviderVerificationFingerprint } from '../src/services/providerHealth';
+import { clearAllProviderAccountHealth, createProviderVerificationFingerprint } from '../src/services/providerHealth';
 import { loadApiKey, saveApiKey } from '../src/storage/keyStore';
 import { loadAllSlotsConfig, saveSlotConfig, saveSlotConnectionTestResult, saveSecondarySlotConfig } from '../src/storage/localStore';
 import {
@@ -45,8 +45,9 @@ async function verifyEvaluator(providerId: 'openai_compat_eval' | 'gemini_eval')
 }
 
 describe('IELTS LLM Evaluator Engine (Stage 3.4 · Tier 1 & Fallback)', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     localStorage.clear();
+    await clearAllProviderAccountHealth();
     clearAllRuntimeFailures();
     clearIeltsSessionLogs();
     clearLlmEvaluationTelemetry();
