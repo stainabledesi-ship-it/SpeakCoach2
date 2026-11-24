@@ -43,6 +43,32 @@ export const SLOT_DEFINITIONS: Record<SlotId, SlotDefinition> = {
         description: 'Custom OpenAI-compatible /audio/speech endpoint with free-text model, voice, and selectable auth.'
       },
       {
+        id: 'groq_tts',
+        name: 'Groq Orpheus TTS (WAV)',
+        slotId: 'voice_tts',
+        tier: 1,
+        requiresKey: true,
+        defaultBaseUrl: 'https://api.groq.com/openai/v1',
+        defaultModelOrVoice: 'canopylabs/orpheus-v1-english',
+        modelSuggestions: ['canopylabs/orpheus-v1-english', 'canopylabs/orpheus-arabic-saudi'],
+        modelFieldLabel: 'Groq TTS model',
+        baseUrlPlaceholder: 'https://api.groq.com/openai/v1',
+        description: 'Groq Orpheus speech endpoint. Requests WAV output; English and Saudi Arabic model variants are available.'
+      },
+      {
+        id: 'freetts_tts',
+        name: 'FreeTTS REST API (MP3)',
+        slotId: 'voice_tts',
+        tier: 1,
+        requiresKey: true,
+        defaultBaseUrl: 'https://freetts.org',
+        defaultModelOrVoice: '',
+        modelSuggestions: [],
+        modelFieldLabel: 'No model selection',
+        baseUrlPlaceholder: 'https://freetts.org',
+        description: 'Two-step REST TTS: submit text, receive a file ID, then download MP3. Enter a voice name below; no model ID is required.'
+      },
+      {
         id: 'azure_tts',
         name: 'Azure Neural TTS (Tier 1)',
         slotId: 'voice_tts',

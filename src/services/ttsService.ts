@@ -103,10 +103,10 @@ export function stopAllTts(): void {
   }
 }
 
-export function normalizeAudioDataUrl(payload: unknown): string {
+export function normalizeAudioDataUrl(payload: unknown, mimeType = 'audio/mpeg'): string {
   if (typeof payload === 'string') {
     if (payload.startsWith('data:audio/')) return payload;
-    return `data:audio/mp3;base64,${payload}`;
+    return `data:${mimeType};base64,${payload}`;
   }
   return '';
 }
@@ -269,7 +269,40 @@ async function synthesizeOnlineNeuralAudioUnshared(
 
   const baseUrl = normalizeBaseUrl(slotCfg.baseUrl);
 
-  if (slotCfg.providerId === 'openai_tts' || slotCfg.providerId === 'custom_openai_tts') {
+  if (slotCfg.providerId === 'freetts_tts') {
+    const voice = slotCfg.customTtsVoice?.trim() || 'en-US-JennyNeural';
+    const ratePercent = Math.max(-50, Math.min(100, Math.round((rate - 1) * 100)));
+    const create = await nativeHttpRequest<{ file_id?: string } | string>(
+      {
+        url: `${baseUrl}/api/v1/tts`,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey },
+        data: { text, voice, rate: `${ratePercent >= 0 ? '+' : ''}${ratePercent}%`, pitch: '+0Hz', output_format: 'mp3' },
+        responseType: 'json',
+        timeoutMs: requestTimeoutMs
+      },
+      transport
+    );
+    const payload = typeof create.data === 'string' ? JSON.parse(create.data) as { file_id?: string } : create.data;
+    const fileId = typeof payload?.file_id === 'string' ? payload.file_id.trim() : '';
+    if (!fileId) throw new Error('FreeTTS did not return a file_id. Check the API key and REST response.');
+    const audio = await nativeHttpRequest<string>(
+      {
+        url: `${baseUrl}/api/audio/${encodeURIComponent(fileId)}`,
+        method: 'GET',
+        headers: { Accept: 'audio/mpeg' },
+        responseType: 'blob',
+        timeoutMs: requestTimeoutMs
+      },
+      transport
+    );
+    const dataUrl = normalizeAudioDataUrl(audio.data, 'audio/mpeg');
+    if (!dataUrl) throw new Error('FreeTTS returned an empty MP3 download.');
+    const persistedToActiveSet = await storeGeneratedAudio(hash, dataUrl, memoryOnly, cacheGeneration, cacheEnabled, setAudio);
+    return { dataUrl, fromCache: false, cacheHash: hash, persistedToActiveSet: setAudio ? persistedToActiveSet : undefined };
+  }
+
+  if (slotCfg.providerId === 'openai_tts' || slotCfg.providerId === 'custom_openai_tts' || slotCfg.providerId === 'groq_tts') {
     let model = 'tts-1';
     let voice = slotCfg.customTtsVoice?.trim() || 'alloy';
 
@@ -301,15 +334,15 @@ async function synthesizeOnlineNeuralAudioUnshared(
           voice,
           input: text,
           speed: rate,
-          response_format: 'mp3'
+          response_format: slotCfg.providerId === 'groq_tts' ? 'wav' : 'mp3'
         },
         responseType: 'blob',
         timeoutMs: 15000
       },
       transport
     );
-    const dataUrl = normalizeAudioDataUrl(res.data);
-    if (!dataUrl) throw new Error(`Empty audio payload from ${slotCfg.providerId === 'custom_openai_tts' ? 'Custom OpenAI' : 'OpenAI'} TTS`);
+    const dataUrl = normalizeAudioDataUrl(res.data, slotCfg.providerId === 'groq_tts' ? 'audio/wav' : 'audio/mpeg');
+    if (!dataUrl) throw new Error(`Empty audio payload from ${slotCfg.providerId === 'groq_tts' ? 'Groq' : slotCfg.providerId === 'custom_openai_tts' ? 'Custom OpenAI' : 'OpenAI'} TTS`);
     const persistedToActiveSet = await storeGeneratedAudio(hash, dataUrl, memoryOnly, cacheGeneration, cacheEnabled, setAudio);
     return { dataUrl, fromCache: false, cacheHash: hash, persistedToActiveSet: setAudio ? persistedToActiveSet : undefined };
   }

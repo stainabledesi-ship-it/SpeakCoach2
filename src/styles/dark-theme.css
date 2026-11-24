@@ -4,33 +4,33 @@
 /* Night forest surfaces with lavender accent and semantic status colors. */
 html[data-theme="dark"] {
   color-scheme: dark;
-  --bg-primary: #17191C;
-  --bg-surface: #22272B;
-  --bg-elevated: #303E36;
-  --bg-raised: #3A4440;
-  --text-primary: #F0F1EF;
-  --text-secondary: #C1C5C1;
-  --text-muted: #969D99;
-  --accent: #3C7778;
-  --accent-strong: #55928F;
-  --accent-soft: rgba(60,119,120,.16);
-  --accent-border: rgba(60,119,120,.58);
-  --accent-shadow: rgba(60,119,120,.18);
-  --primary: #3C7778;
-  --on-accent: #FFFFFF;
-  --success: #A8C18B;
-  --success-bg: rgba(168,193,139,.16);
-  --warning: #FFB04A;
-  --warning-bg: rgba(255,176,74,.15);
-  --danger: #D9785D;
-  --danger-bg: rgba(217,120,93,.16);
-  --neutral-chip: #AEB8B3;
-  --border: #41484D;
-  --record-bg: #C6533D;
-  --record-bg-hover: #A94332;
-  --record-border: #A94332;
-  --record-disabled-bg: #63352D;
-  --record-text: #FFFFFF;
+  --bg-primary: #121316;
+  --bg-surface: #1A1C21;
+  --bg-elevated: #23262E;
+  --bg-raised: #23262E;
+  --text-primary: #ECEEF2;
+  --text-secondary: #9BA1B0;
+  --text-muted: #7B8190;
+  --accent: #7B93F5;
+  --accent-strong: #637CE6;
+  --accent-soft: rgba(123,147,245,.14);
+  --accent-border: rgba(123,147,245,.62);
+  --accent-shadow: rgba(123,147,245,.18);
+  --primary: #7B93F5;
+  --on-accent: #0F1115;
+  --success: #5EC29A;
+  --success-bg: rgba(94,194,154,.14);
+  --warning: #EAB665;
+  --warning-bg: rgba(234,182,101,.14);
+  --danger: #EB7373;
+  --danger-bg: rgba(235,115,115,.14);
+  --neutral-chip: #9BA1B0;
+  --border: #2E323C;
+  --record-bg: #EB7373;
+  --record-bg-hover: #D85F68;
+  --record-border: #D85F68;
+  --record-disabled-bg: #63383D;
+  --record-text: #0F1115;
 }
 html, body { background: var(--bg-primary); color: var(--text-primary); }
 body {

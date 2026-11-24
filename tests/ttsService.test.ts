@@ -702,4 +702,44 @@ describe('Voice TTS Service (Online Neural Caching + Offline Native Fallback)', 
     }
   });
 
+  it('requests WAV from Groq Orpheus and returns an audio/wav data URL', async () => {
+    let request: any;
+    const result = await synthesizeOnlineNeuralAudio('Hello from Groq.', {
+      slotId: 'voice_tts',
+      providerId: 'groq_tts',
+      baseUrl: 'https://api.groq.com/openai/v1',
+      modelOrVoice: 'canopylabs/orpheus-v1-english',
+      customTtsVoice: 'troy'
+    }, 'groq-test-key', 1, async (opts: any) => {
+      request = opts;
+      return { url: opts.url, status: 200, headers: { 'content-type': 'audio/wav' }, data: 'UklGRg==' };
+    });
+    expect(request.url).toBe('https://api.groq.com/openai/v1/audio/speech');
+    expect(request.data).toMatchObject({ model: 'canopylabs/orpheus-v1-english', voice: 'troy', response_format: 'wav' });
+    expect(result.dataUrl).toBe('data:audio/wav;base64,UklGRg==');
+  });
+
+  it('uses FreeTTS two-step REST file-id download without a model', async () => {
+    const requests: any[] = [];
+    const result = await synthesizeOnlineNeuralAudio('A FreeTTS sentence.', {
+      slotId: 'voice_tts',
+      providerId: 'freetts_tts',
+      baseUrl: 'https://freetts.org',
+      modelOrVoice: '',
+      customTtsVoice: 'en-US-JennyNeural'
+    }, 'freetts-test-key', 1, async (opts: any) => {
+      requests.push(opts);
+      if (opts.method === 'POST') {
+        return { url: opts.url, status: 200, headers: { 'content-type': 'application/json' }, data: { file_id: 'test-file-id' } };
+      }
+      return { url: opts.url, status: 200, headers: { 'content-type': 'audio/mpeg' }, data: 'SUQzBAAAAAAA' };
+    });
+    expect(requests).toHaveLength(2);
+    expect(requests[0].url).toBe('https://freetts.org/api/v1/tts');
+    expect(requests[0].headers['x-api-key']).toBe('freetts-test-key');
+    expect(requests[0].data).toMatchObject({ text: 'A FreeTTS sentence.', voice: 'en-US-JennyNeural', rate: '+0%', pitch: '+0Hz' });
+    expect(requests[1].url).toBe('https://freetts.org/api/audio/test-file-id');
+    expect(result.dataUrl).toBe('data:audio/mpeg;base64,SUQzBAAAAAAA');
+  });
+
 });

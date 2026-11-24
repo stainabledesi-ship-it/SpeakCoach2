@@ -4272,8 +4272,19 @@ body {
 /* Shadowing device-feedback refinements: spacing, hierarchy and centered actions. */
 .shadowing-page .sh-sentence-set-heading {
   border-bottom: 1px solid var(--border);
-  padding-bottom: 10px;
+  padding-bottom: 4px;
+  margin-bottom: 3px;
+}
+.shadowing-page .sh-sentence-set-heading h2 {
+  font-size: 1.12rem;
+  line-height: 1.2;
+}
+.shadowing-page .sh-set-guidance {
+  margin-top: 0;
   margin-bottom: 10px;
+}
+.shadowing-page .sh-history-controls {
+  margin-bottom: 22px;
 }
 .shadowing-page .sh-generate-actions { margin-top: 12px; }
 .shadowing-page .sh-history-controls {
