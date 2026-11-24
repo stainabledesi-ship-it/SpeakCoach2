@@ -65,7 +65,7 @@ describe('Shadowing Trainer UI (Empty-By-Default Transcript, No Reference Fallba
     await new Promise((resolve) => setTimeout(resolve, 50));
 
     const initialShadowingText = root.querySelector('#sh-target-text')?.textContent ?? '';
-    expect(initialShadowingText).toBe('Could you please tell me where the nearest train station is.');
+    expect(initialShadowingText).toBe('Could you please tell me where the nearest train station is?');
     expect(root.querySelector<HTMLTextAreaElement>('#sh-translation-input')?.value).toBe(initialShadowingText);
     expect(root.querySelector('.sentence-source-switch')).toBeNull();
     expect(root.querySelectorAll('.sentence-source-card')).toHaveLength(0);
@@ -114,7 +114,7 @@ describe('Shadowing Trainer UI (Empty-By-Default Transcript, No Reference Fallba
     const root = document.createElement('div');
     await bootstrapApp(root, 'shadowing');
 
-    // Recognizer heard sentence with "usually" and "hot" skipped
+    // Recognizer heard sentence with "please" and "nearest" skipped
     audioRecorder.setMockRecognizerOutputForTest({
       transcript: 'Could you tell me where the train station is',
       confidence: 0.87,
@@ -160,7 +160,7 @@ describe('Shadowing Trainer UI (Empty-By-Default Transcript, No Reference Fallba
     await new Promise((r) => setTimeout(r, 40));
 
     expect(root.querySelector('#diag-last-ref')?.textContent).toContain(
-      'Could you please tell me where the nearest train station is.'
+      'Could you please tell me where the nearest train station is?'
     );
     expect(root.querySelector('#diag-last-raw')?.textContent).toContain(
       '"Could you tell me where the train station is" (87%)'
