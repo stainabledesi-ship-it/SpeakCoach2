@@ -84,19 +84,19 @@ describe('TTS voice discovery', () => {
     expect(transport).not.toHaveBeenCalled();
   });
 
-  it('loads FreeTTS voice names from its documented voice catalogue endpoint', async () => {
+  it('loads the public FreeTTS voice catalogue without an API key and normalizes an /api base URL', async () => {
     const transport = vi.fn(async (options: any) => ({
       url: options.url, status: 200, headers: {},
       data: [{ ShortName: 'en-US-JennyNeural', FriendlyName: 'Jenny', Locale: 'en-US', Gender: 'Female' }]
     }));
     const result = await fetchAvailableTtsVoices({
       slotId: 'voice_tts', providerId: 'freetts_tts',
-      baseUrl: 'https://freetts.org', modelOrVoice: ''
-    }, 'free-key', { transport });
+      baseUrl: 'https://freetts.org/api', modelOrVoice: ''
+    }, '', { transport });
     expect(transport).toHaveBeenCalledWith(expect.objectContaining({
       url: 'https://freetts.org/api/voices',
       method: 'GET',
-      headers: { 'x-api-key': 'free-key' }
+      headers: {}
     }));
     expect(result.voices).toEqual([{ value: 'en-US-JennyNeural', label: 'Jenny · en-US · Female' }]);
   });
