@@ -320,7 +320,7 @@ html[data-theme="dark"]:has(.shadowing-page),
 html[data-theme="dark"]:has(.shadowing-page) body,
 html[data-theme="dark"]:has(.shadowing-page) #app,
 html[data-theme="dark"]:has(.shadowing-page) .view-container {
-  background: #17191C !important;
+  background:#17191C !important;
   background-image: none !important;
 }
 
@@ -337,7 +337,7 @@ html[data-theme="dark"]:has(.shadowing-page),
 html[data-theme="dark"]:has(.shadowing-page) body,
 html[data-theme="dark"]:has(.shadowing-page) #app,
 html[data-theme="dark"]:has(.shadowing-page) .view-container {
-  background: #17191C !important;
+  background:#17191C !important;
   background-image: none !important;
 }
 html[data-theme="dark"] .btn-primary { background:var(--accent); color:var(--on-accent); }
