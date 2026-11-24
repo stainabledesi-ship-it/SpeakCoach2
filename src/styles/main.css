@@ -4386,3 +4386,21 @@ body {
   .ielts-session-topbar { grid-template-columns:44px minmax(0,1fr); }
   .ielts-session-step-label { grid-column:2; }
 }
+
+
+/* Follow the IELTS page's flat canvas: no nested dark panel around Shadowing. */
+[data-page="shadowing"] .shadowing-main-card,
+.shadowing-page .shadowing-main-card {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+.shadowing-page .sh-sentence-set-heading h2 { font-size: 1.12rem; }
+.shadowing-page .sh-sentence-set-heading { margin-bottom: 3px; padding-bottom: 3px; }
+.shadowing-page .sh-set-guidance { margin-top: 0; margin-bottom: 10px; }
+.shadowing-page .sh-history-controls { justify-content: flex-start; }
+.shadowing-page .sh-history-caption { margin-left: auto; margin-right: 0; text-align: end; }
+.settings-copy-key-field { display:flex; align-items:center; gap:8px; margin-top:8px; }
+.settings-copy-key-field > .form-label { flex:0 0 auto; white-space:nowrap; font-size:.76rem; }
+.settings-copy-key-field .settings-copy-key { flex:1 1 auto; min-width:0; }
+.settings-copy-key-field .copy-key-provider-picker .provider-picker-trigger { min-height:38px; padding:7px 10px; font-size:.8rem; }

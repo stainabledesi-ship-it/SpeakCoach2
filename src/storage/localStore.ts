@@ -215,12 +215,14 @@ export async function saveSlotConfig(config: SlotConfig): Promise<AllSlotsConfig
   const sanitized = sanitizeSlotConfig(config.slotId, config);
   all[config.slotId] = sanitized;
   await setRawItem(SLOTS_CONFIG_KEY, JSON.stringify(all));
-  clearSlotRuntimeFailure(config.slotId);
-  await clearProviderAccountHealth(config.slotId, 'primary');
-  // Saving the primary slot always requires a fresh Deep test, even if its
-  // values are unchanged. Secondary-only edits use saveSecondarySlotConfig()
-  // and therefore preserve the primary verification.
-  await clearSlotConnectionTestResult(config.slotId);
+  const previous = await loadAllSlotsConfig();
+  const previousPrimary = previous[config.slotId];
+  const primaryChanged = JSON.stringify({ ...previousPrimary, secondary: undefined }) !== JSON.stringify({ ...sanitized, secondary: undefined });
+  if (primaryChanged) {
+    clearSlotRuntimeFailure(config.slotId);
+    await clearProviderAccountHealth(config.slotId, 'primary');
+    await clearSlotConnectionTestResult(config.slotId);
+  }
   return all;
 }
 
@@ -231,8 +233,12 @@ export async function saveSecondarySlotConfig(
   const all = await loadAllSlotsConfig();
   all[slotId] = sanitizeSlotConfig(slotId, { ...all[slotId], secondary });
   await setRawItem(SLOTS_CONFIG_KEY, JSON.stringify(all));
-  clearSlotRuntimeFailure(slotId);
-  await clearProviderAccountHealth(slotId, 'secondary');
+  const previousSecondary = all[slotId].secondary;
+  const secondaryChanged = JSON.stringify(previousSecondary ?? null) !== JSON.stringify(sanitized[slotId].secondary ?? null);
+  if (secondaryChanged) {
+    clearSlotRuntimeFailure(slotId);
+    await clearProviderAccountHealth(slotId, 'secondary');
+  }
 }
 
 export async function saveAllSlotsConfig(configs: AllSlotsConfig): Promise<void> {
