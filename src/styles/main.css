@@ -4396,11 +4396,36 @@ body {
   border: 0 !important;
   box-shadow: none !important;
 }
-.shadowing-page .sh-sentence-set-heading h2 { font-size: 1.12rem; }
-.shadowing-page .sh-sentence-set-heading { margin-bottom: 3px; padding-bottom: 3px; }
+/* Final Shadowing header and history alignment corrections. */
+.shadowing-page .sh-sentence-set-heading {
+  min-height: 0;
+  padding: 0 0 2px;
+  margin-bottom: 2px;
+}
+.shadowing-page .sh-sentence-set-heading h2 {
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
 .shadowing-page .sh-set-guidance { margin-top: 0; margin-bottom: 10px; }
-.shadowing-page .sh-history-controls { justify-content: flex-start; }
-.shadowing-page .sh-history-caption { margin-left: auto; margin-right: 0; text-align: end; }
+.shadowing-page .sh-history-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.shadowing-page .sh-history-caption {
+  justify-self: center;
+  margin: 0;
+  text-align: center;
+}
+.shadowing-page .sh-history-position { justify-self: center; text-align: center; }
+.shadowing-page .sh-history-arrows {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .settings-copy-key-field { display:flex; align-items:center; gap:8px; margin-top:8px; }
 .settings-copy-key-field > .form-label { flex:0 0 auto; white-space:nowrap; font-size:.76rem; }
 .settings-copy-key-field .settings-copy-key { flex:1 1 auto; min-width:0; }
