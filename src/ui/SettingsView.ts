@@ -1807,7 +1807,7 @@ export async function renderSettingsView(
       const voiceContainer = container.querySelector<HTMLElement>(`#tts-voice-container-${slotId}`);
       if (voiceContainer) voiceContainer.style.display = selected.id === 'android_native_tts' ? 'none' : '';
       const fetchVoices = container.querySelector<HTMLButtonElement>(`#fetch-voices-btn-${slotId}`);
-      if (fetchVoices) fetchVoices.style.display = selected.id === 'groq_tts' || selected.id === 'freetts_tts' ? 'none' : '';
+      if (fetchVoices) fetchVoices.style.display = '';
       const voiceInput = container.querySelector<HTMLInputElement>(`#custom-voice-${slotId}`);
       if (voiceInput) {
         voiceInput.value = '';
