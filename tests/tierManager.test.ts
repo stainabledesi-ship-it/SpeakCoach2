@@ -305,7 +305,7 @@ describe('HTTP Client & 3-Tier Auto-Fallback Framework', () => {
     await markSlotVerified('llm_evaluator', 'openai_compat_eval');
     expect((await resolveSlotTier(evalCfg)).tier).toBe(1);
 
-    // 5. Failed test (even with 401/503/timeout) must NOT force the slot into Tier 3
+    // 5. A failed deep test invalidates the previous PASS; stale verification must not remain active
     const failedDeepTest = await testSlotConnection(evalCfg, {
       apiKeyOverride: 'sk-test-key',
       transport: async (opts) => ({
@@ -318,8 +318,8 @@ describe('HTTP Client & 3-Tier Auto-Fallback Framework', () => {
     expect(failedDeepTest.ok).toBe(false);
     await saveSlotConnectionTestResult('llm_evaluator', failedDeepTest);
     const afterDeepTest = await resolveSlotTier(evalCfg);
-    expect(afterDeepTest.tier).toBe(1);
-    expect(afterDeepTest.label).toBe('Online AI');
+    expect(afterDeepTest.tier).toBe(3);
+    expect(afterDeepTest.label).toBe('Basic offline');
   });
 });
 
