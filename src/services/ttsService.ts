@@ -267,7 +267,11 @@ async function synthesizeOnlineNeuralAudioUnshared(
     }
   }
 
-  const baseUrl = normalizeBaseUrl(slotCfg.baseUrl);
+  const normalizedBaseUrl = normalizeBaseUrl(slotCfg.baseUrl);
+  // Accept the host root and documented /api or /api/v1 base URL variants.
+  const baseUrl = slotCfg.providerId === 'freetts_tts'
+    ? normalizedBaseUrl.replace(/\/api(?:\/v1)?$/i, '')
+    : normalizedBaseUrl;
 
   if (slotCfg.providerId === 'freetts_tts') {
     const voice = slotCfg.customTtsVoice?.trim() || 'en-US-JennyNeural';
