@@ -61,7 +61,7 @@ describe('Shadowing sentence-set history', () => {
 
     const restored = await loadShadowingSetHistory();
     expect(restored.easy.activeSentenceIndex).toBe(7);
-    expect(getActiveShadowingSet(restored, 'easy').sentences[7].id).toBe('builtin-easy-set-1-8');
+    expect(getActiveShadowingSet(restored, 'easy').sentences[7].id).toBe(BUILTIN_SHADOWING_SETS.easy[0][7].id);
   });
 
   it('adds generated sets to the same history and keeps at most ten per difficulty', async () => {

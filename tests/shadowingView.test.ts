@@ -65,7 +65,7 @@ describe('Shadowing Trainer UI (Empty-By-Default Transcript, No Reference Fallba
     await new Promise((resolve) => setTimeout(resolve, 50));
 
     const initialShadowingText = root.querySelector('#sh-target-text')?.textContent ?? '';
-    expect(initialShadowingText).toBe('I usually start my morning with a cup of hot coffee.');
+    expect(initialShadowingText).toBe('Could you please tell me where the nearest train station is.');
     expect(root.querySelector<HTMLTextAreaElement>('#sh-translation-input')?.value).toBe(initialShadowingText);
     expect(root.querySelector('.sentence-source-switch')).toBeNull();
     expect(root.querySelectorAll('.sentence-source-card')).toHaveLength(0);
@@ -116,11 +116,11 @@ describe('Shadowing Trainer UI (Empty-By-Default Transcript, No Reference Fallba
 
     // Recognizer heard sentence with "usually" and "hot" skipped
     audioRecorder.setMockRecognizerOutputForTest({
-      transcript: 'I start my morning with a cup of coffee',
+      transcript: 'Could you tell me where the train station is',
       confidence: 0.87,
       alternatives: [
-        { transcript: 'I start my morning with a cup of coffee', confidence: 0.87 },
-        { transcript: 'I start morning with a cup of coffee', confidence: 0.72 }
+        { transcript: 'Could you tell me where the train station is', confidence: 0.87 },
+        { transcript: 'Could you tell me where train station is', confidence: 0.72 }
       ]
     });
 
@@ -128,7 +128,7 @@ describe('Shadowing Trainer UI (Empty-By-Default Transcript, No Reference Fallba
     await new Promise((r) => setTimeout(r, 40));
 
     const transcriptInput = root.querySelector<HTMLInputElement>('#sh-transcript-input');
-    expect(transcriptInput?.value).toBe('I start my morning with a cup of coffee');
+    expect(transcriptInput?.value).toBe('Could you tell me where the train station is');
     expect(root.querySelector('#sh-recognizer-meta')?.textContent).toContain('87%');
 
     expect(root.querySelector('#sh-score-card')).not.toBeNull();
@@ -160,13 +160,13 @@ describe('Shadowing Trainer UI (Empty-By-Default Transcript, No Reference Fallba
     await new Promise((r) => setTimeout(r, 40));
 
     expect(root.querySelector('#diag-last-ref')?.textContent).toContain(
-      'I usually start my morning with a cup of hot coffee.'
+      'Could you please tell me where the nearest train station is.'
     );
     expect(root.querySelector('#diag-last-raw')?.textContent).toContain(
-      '"I start my morning with a cup of coffee" (87%)'
+      '"Could you tell me where the train station is" (87%)'
     );
-    expect(root.querySelector('#diag-last-alignment')?.textContent).toContain('usually [missing:0%]');
-    expect(root.querySelector('#diag-last-alignment')?.textContent).toContain('hot [missing:0%]');
+    expect(root.querySelector('#diag-last-alignment')?.textContent).toContain('please [missing:0%]');
+    expect(root.querySelector('#diag-last-alignment')?.textContent).toContain('nearest [missing:0%]');
 
     // Return to Shadowing and click Retry Weak Words
     root.querySelector<HTMLButtonElement>('#nav-shadowing')?.click();
@@ -179,14 +179,14 @@ describe('Shadowing Trainer UI (Empty-By-Default Transcript, No Reference Fallba
     expect(root.querySelector('#sh-score-card #sh-retry-weak-btn')).toBeNull();
     retryWeakBtn?.click();
 
-    expect(root.querySelector('#sh-target-text')?.textContent).toBe('usually hot');
+    expect(root.querySelector('#sh-target-text')?.textContent).toBe('please nearest');
     expect(root.querySelector('#sh-exit-drill-btn')?.closest('.sh-drill-exit-actions')).not.toBeNull();
     expect(root.querySelector('#sh-exit-drill-btn')?.closest('.sh-player-controls')).toBeNull();
     expect(root.querySelector<HTMLInputElement>('#sh-transcript-input')?.value).toBe('');
     expect(root.querySelector('#sh-fluency-score')).toBeNull();
     expect(root.querySelector('#sh-pace-score')).toBeNull();
 
-    audioRecorder.setMockRecognizerOutputForTest({ transcript: 'usually', confidence: 0.93 });
+    audioRecorder.setMockRecognizerOutputForTest({ transcript: 'please', confidence: 0.93 });
     root.querySelector<HTMLButtonElement>('#sh-record-btn')?.click();
     await new Promise((r) => setTimeout(r, 25));
     root.querySelector<HTMLButtonElement>('#sh-record-btn')?.click();
@@ -194,7 +194,7 @@ describe('Shadowing Trainer UI (Empty-By-Default Transcript, No Reference Fallba
     expect(root.querySelector('#sh-drill-correct-count')?.textContent).toContain('1 / 2');
     expect(root.querySelector('.drill-word-progress')?.textContent).toBe('Improved');
     expect(root.querySelector('#sh-retry-weak-btn')?.textContent).toContain('Retry remaining weak words');
-    expect(root.querySelector('#sh-target-text')?.textContent).toBe('usually hot');
+    expect(root.querySelector('#sh-target-text')?.textContent).toBe('please nearest');
   });
 
   it('Part 2B: disables replay and word timing in System SpeechRecognizer mode with clear label, and enables Tier 2 speed tags and timing bars when online', async () => {
@@ -219,7 +219,7 @@ describe('Shadowing Trainer UI (Empty-By-Default Transcript, No Reference Fallba
     expect(audioRecorder.getLastStartOptions()?.useOfflineRecognizer).toBe(true);
 
     audioRecorder.setMockRecognizerOutputForTest({
-      transcript: 'I usually start my morning with a cup of hot coffee',
+      transcript: 'Could you please tell me where the nearest train station is',
       confidence: 0.92
     });
 
