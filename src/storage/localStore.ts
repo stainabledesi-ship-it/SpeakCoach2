@@ -294,6 +294,7 @@ export async function saveSlotConnectionTestResult(
   if (result.ok) {
     const currentConfig = await loadAllSlotsConfig();
     if (currentConfig[slotId].providerId === result.providerId) {
+      clearSlotRuntimeFailure(slotId);
       await clearProviderAccountHealth(slotId, 'primary');
     }
   }
