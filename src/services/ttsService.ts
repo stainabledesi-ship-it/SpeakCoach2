@@ -304,7 +304,7 @@ async function synthesizeOnlineNeuralAudioUnshared(
 
   if (slotCfg.providerId === 'openai_tts' || slotCfg.providerId === 'custom_openai_tts' || slotCfg.providerId === 'groq_tts') {
     let model = 'tts-1';
-    let voice = slotCfg.customTtsVoice?.trim() || 'alloy';
+    let voice = slotCfg.customTtsVoice?.trim() || (slotCfg.providerId === 'groq_tts' ? 'troy' : 'alloy');
 
     if (slotCfg.modelOrVoice.includes(':')) {
       const [modelPart, voicePart] = slotCfg.modelOrVoice.split(':');
