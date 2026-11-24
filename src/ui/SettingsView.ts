@@ -428,6 +428,7 @@ ${preset.id === 'freetts_tts' ? '' : `          <div class="form-field">
               ? `<div class="form-field" id="tts-voice-container-${slotId}" style="${showVoiceInput ? '' : 'display: none;'}">
                   <label class="form-label" for="custom-voice-${slotId}">Voice (choose from the available list or enter a custom name)</label>
                   <input type="text" class="form-input" id="custom-voice-${slotId}" value="${escapeHtml(slotCfg.customTtsVoice ?? '')}" placeholder="${preset.id === 'freetts_tts' ? 'en-US-JennyNeural' : preset.id === 'groq_tts' ? 'troy' : 'Choose or enter a voice name'}" autocomplete="off" />
+                  ${preset.id === 'groq_tts' ? '<p class="card-subtitle">English voices: troy, hannah, autumn, diana, austin, daniel. Arabic Saudi voices: fahad, abdullah, sultan, lulwa, noura, aisha. Orpheus accepts up to 200 characters per request.</p>' : ''}
                   <div class="voice-picker-dropdown">
                     <div class="btn-row">${preset.id === 'groq_tts' || preset.id === 'freetts_tts' ? '' : `<button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-voices-btn-${slotId}">Load available voices</button>`}<button type="button" class="btn btn-secondary" id="preview-voice-btn-${slotId}">Preview voice</button></div>
                     <div class="model-picker-options" id="voices-list-${slotId}" hidden></div>

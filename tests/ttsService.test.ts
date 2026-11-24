@@ -742,4 +742,13 @@ describe('Voice TTS Service (Online Neural Caching + Offline Native Fallback)', 
     expect(result.dataUrl).toBe('data:audio/mpeg;base64,SUQzBAAAAAAA');
   });
 
+  it('rejects Groq Orpheus text over its 200-character input limit', async () => {
+    await expect(synthesizeOnlineNeuralAudio('x'.repeat(201), {
+      slotId: 'voice_tts',
+      providerId: 'groq_tts',
+      baseUrl: 'https://api.groq.com/openai/v1',
+      modelOrVoice: 'canopylabs/orpheus-v1-english'
+    }, 'groq-test-key')).rejects.toThrow('up to 200 characters');
+  });
+
 });

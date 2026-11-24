@@ -314,6 +314,13 @@ async function synthesizeOnlineNeuralAudioUnshared(
       model = slotCfg.modelOrVoice.trim();
     }
 
+    if (slotCfg.providerId === 'groq_tts') {
+      if (text.length > 200) {
+        throw new Error('Groq Orpheus accepts up to 200 characters per request. Use another TTS provider for longer text.');
+      }
+      if (!slotCfg.customTtsVoice?.trim()) voice = model.includes('arabic') ? 'fahad' : 'troy';
+    }
+
     const prepared = buildCustomEndpointRequest({
       baseUrl,
       defaultPath: '/audio/speech',
