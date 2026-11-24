@@ -120,13 +120,19 @@ export async function fetchAvailableTtsVoices(
         value: voice.ShortName.trim(),
         label: [voice.DisplayName, voice.Locale, voice.Gender].filter(Boolean).join(' · ') || voice.ShortName.trim()
       }));
-  } else if (isFreeTts && Array.isArray(payload)) {
-    voices = payload
-      .filter((voice: any) => typeof voice?.ShortName === 'string' && voice.ShortName.trim())
-      .map((voice: any) => ({
-        value: voice.ShortName.trim(),
-        label: [voice.FriendlyName, voice.Locale, voice.Gender].filter(Boolean).join(' · ') || voice.ShortName.trim()
-      }));
+  } else if (isFreeTts && (Array.isArray(payload) || Array.isArray(payload?.voices))) {
+    const entries = Array.isArray(payload) ? payload : payload.voices;
+    voices = entries
+      .map((voice: any) => {
+        const value = [voice?.ShortName, voice?.short_name, voice?.name, voice?.voice, voice?.id]
+          .find(item => typeof item === 'string' && item.trim());
+        if (!value) return null;
+        const label = [voice?.FriendlyName, voice?.friendly_name, voice?.display_name, voice?.name, voice?.Locale, voice?.locale, voice?.Gender, voice?.gender]
+          .filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+          .join(' · ');
+        return { value: value.trim(), label: label || value.trim() };
+      })
+      .filter((voice: TtsVoiceOption | null): voice is TtsVoiceOption => voice !== null);
   } else if (!isAzure && Array.isArray(payload?.voices)) {
     voices = payload.voices
       .filter((voice: any) => typeof voice?.voice_id === 'string' && voice.voice_id.trim())
