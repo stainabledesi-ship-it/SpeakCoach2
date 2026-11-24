@@ -90,18 +90,19 @@ export async function fetchAvailableTtsVoices(
     };
   }
 
-  const baseUrl = normalizeBaseUrl(config.baseUrl);
-  if (!/^https?:\/\//i.test(baseUrl)) throw new Error('Base URL must start with http:// or https://.');
-  if (!apiKey.trim()) throw new Error('Enter and save the API key before loading this provider’s voices.');
-
   const isAzure = providerId === 'azure_tts';
   const isFreeTts = providerId === 'freetts_tts';
+  const configuredBaseUrl = normalizeBaseUrl(config.baseUrl);
+  const baseUrl = isFreeTts ? configuredBaseUrl.replace(/\/api(?:\/v1)?$/i, '') : configuredBaseUrl;
+  if (!/^https?:\/\//i.test(baseUrl)) throw new Error('Base URL must start with http:// or https://.');
+  // FreeTTS documents GET /api/voices as public; synthesis itself still needs the key.
+  if (!isFreeTts && !apiKey.trim()) throw new Error('Enter and save the API key before loading this provider’s voices.');
   const url = isAzure
     ? `${baseUrl}/cognitiveservices/voices/list`
     : isFreeTts ? `${baseUrl}/api/voices` : `${baseUrl}/voices`;
   const headers: Record<string, string> = isAzure
     ? { 'Ocp-Apim-Subscription-Key': apiKey.trim() }
-    : isFreeTts ? { 'x-api-key': apiKey.trim() } : { 'xi-api-key': apiKey.trim() };
+    : isFreeTts ? {} : { 'xi-api-key': apiKey.trim() };
 
   const response = await nativeHttpRequest<unknown>({
     url,
