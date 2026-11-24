@@ -430,7 +430,7 @@ export async function renderSettingsView(
                   <input type="text" class="form-input" id="custom-voice-${slotId}" value="${escapeHtml(slotCfg.customTtsVoice ?? '')}" placeholder="${preset.id === 'freetts_tts' ? 'en-US-JennyNeural' : preset.id === 'groq_tts' ? 'troy' : 'Choose or enter a voice name'}" autocomplete="off" />
                   ${preset.id === 'groq_tts' ? '<p class="card-subtitle">English voices: troy, hannah, autumn, diana, austin, daniel. Arabic Saudi voices: fahad, abdullah, sultan, lulwa, noura, aisha. Orpheus accepts up to 200 characters per request.</p>' : ''}
                   <div class="voice-picker-dropdown">
-                    <div class="btn-row"><button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-voices-btn-${slotId}" style="${preset.id === 'groq_tts' || preset.id === 'freetts_tts' ? 'display:none;' : ''}">Load available voices</button><button type="button" class="btn btn-secondary" id="preview-voice-btn-${slotId}">Preview voice</button></div>
+                    <div class="btn-row"><button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-voices-btn-${slotId}" >Load available voices</button><button type="button" class="btn btn-secondary" id="preview-voice-btn-${slotId}">Preview voice</button></div>
                     <div class="model-picker-options" id="voices-list-${slotId}" hidden></div>
                     <div id="preview-voice-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
                     <div id="fetch-voices-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
@@ -536,7 +536,7 @@ export async function renderSettingsView(
               <label class="form-label" for="secondary-custom-voice-${slotId}">API 2 voice (choose from the available list or enter a custom name)</label>
               <input type="text" class="form-input" id="secondary-custom-voice-${slotId}" value="${escapeHtml(slotCfg.secondary?.customTtsVoice ?? '')}" placeholder="${secondaryPreset?.id === 'freetts_tts' ? 'en-US-JennyNeural' : secondaryPreset?.id === 'groq_tts' ? 'troy' : 'Choose or enter a voice name'}" autocomplete="off" />
               <div class="voice-picker-dropdown">
-                <div class="btn-row"><button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-secondary-voices-btn-${slotId}" style="${secondaryPreset?.id === 'groq_tts' || secondaryPreset?.id === 'freetts_tts' ? 'display:none;' : ''}">Load available voices</button><button type="button" class="btn btn-secondary" id="preview-secondary-voice-btn-${slotId}">Preview voice</button></div>
+                <div class="btn-row"><button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-secondary-voices-btn-${slotId}" >Load available voices</button><button type="button" class="btn btn-secondary" id="preview-secondary-voice-btn-${slotId}">Preview voice</button></div>
                 <div class="model-picker-options" id="secondary-voices-list-${slotId}" hidden></div>
                 <div id="preview-secondary-voice-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
                 <div id="fetch-secondary-voices-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
