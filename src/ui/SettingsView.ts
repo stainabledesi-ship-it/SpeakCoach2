@@ -389,7 +389,7 @@ export async function renderSettingsView(
                 </div>
               </div>` : ''}
           </div>
-${preset.id === 'freetts_tts' ? '' : `          <div class="form-field">
+          <div class="form-field" id="model-field-${slotId}" style="${preset.id === 'freetts_tts' ? 'display:none;' : ''}">
             <div class="settings-field-heading">
               <label class="form-label settings-field-label" for="model-${slotId}">
                 ${escapeHtml(preset.modelFieldLabel)}
@@ -419,7 +419,7 @@ ${preset.id === 'freetts_tts' ? '' : `          <div class="form-field">
             <div id="fetch-models-msg-${slotId}" style="display: none;" class="settings-fetch-models-message"></div>
 
             ${slotId === 'pronunciation_scoring' || slotId === 'ielts_stt' ? `<p class="card-subtitle">This slot requires a Speech-to-Text endpoint (audio → text), normally <code>/audio/transcriptions</code> for OpenAI-compatible APIs. A text-only chat model is not sufficient.</p>` : ''}
-          </div>`}
+          </div>
 
 
 
@@ -430,7 +430,7 @@ ${preset.id === 'freetts_tts' ? '' : `          <div class="form-field">
                   <input type="text" class="form-input" id="custom-voice-${slotId}" value="${escapeHtml(slotCfg.customTtsVoice ?? '')}" placeholder="${preset.id === 'freetts_tts' ? 'en-US-JennyNeural' : preset.id === 'groq_tts' ? 'troy' : 'Choose or enter a voice name'}" autocomplete="off" />
                   ${preset.id === 'groq_tts' ? '<p class="card-subtitle">English voices: troy, hannah, autumn, diana, austin, daniel. Arabic Saudi voices: fahad, abdullah, sultan, lulwa, noura, aisha. Orpheus accepts up to 200 characters per request.</p>' : ''}
                   <div class="voice-picker-dropdown">
-                    <div class="btn-row">${preset.id === 'groq_tts' || preset.id === 'freetts_tts' ? '' : `<button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-voices-btn-${slotId}">Load available voices</button>`}<button type="button" class="btn btn-secondary" id="preview-voice-btn-${slotId}">Preview voice</button></div>
+                    <div class="btn-row"><button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-voices-btn-${slotId}" style="${preset.id === 'groq_tts' || preset.id === 'freetts_tts' ? 'display:none;' : ''}">Load available voices</button><button type="button" class="btn btn-secondary" id="preview-voice-btn-${slotId}">Preview voice</button></div>
                     <div class="model-picker-options" id="voices-list-${slotId}" hidden></div>
                     <div id="preview-voice-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
                     <div id="fetch-voices-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
@@ -522,7 +522,7 @@ ${preset.id === 'freetts_tts' ? '' : `          <div class="form-field">
               </div></div>
             <div class="form-field"><label class="form-label" for="secondary-key-${slotId}">API Key (${secondaryPreset?.requiresKey === false ? 'Offline — no key needed' : keyStorageLabel})</label>
               <input type="password" class="form-input" id="secondary-key-${slotId}" value="" autocomplete="off" placeholder="${secondaryPreset?.requiresKey === false ? 'No API key needed' : secondaryKeysBySlot[slotId] ? 'API 2 key is stored securely. Leave blank to keep it, or type a replacement.' : 'Enter second API key'}" ${secondaryPreset?.requiresKey === false ? 'disabled' : ''} /></div>
-${secondaryPreset?.id === 'freetts_tts' ? '' : `            <div class="form-field">
+            <div class="form-field" id="secondary-model-field-${slotId}" style="${secondaryPreset?.id === 'freetts_tts' ? 'display:none;' : ''}">
               <div class="settings-field-heading">
                 <label class="form-label" for="secondary-model-${slotId}">${escapeHtml(secondaryPreset?.modelFieldLabel ?? "Model / voice")}</label>
                 <button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-secondary-models-btn-${slotId}">Fetch models</button>
@@ -530,13 +530,13 @@ ${secondaryPreset?.id === 'freetts_tts' ? '' : `            <div class="form-fie
               <input type="text" class="form-input" id="secondary-model-${slotId}" value="${escapeHtml(slotCfg.secondary?.modelOrVoice ?? '')}" placeholder="${escapeHtml(secondaryPreset?.defaultModelOrVoice ?? 'Model name')}" />
               ${secondaryIsCustom ? `<p class="card-subtitle">Custom API 2 model ID is free text; suggestions do not limit what you can enter. Use the exact ID and audio endpoint supported by that gateway.</p>` : ''}
               <div class="model-picker-dropdown"><button type="button" class="model-picker-trigger" aria-expanded="false">Browse available models</button><div class="model-picker-options" id="secondary-models-list-${slotId}" hidden>${secondarySuggestions.map((model) => `<button type="button" class="model-option" data-model-value="${escapeHtml(model)}">${escapeHtml(model)}</button>`).join("")}</div></div><div id="fetch-secondary-models-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
-            </div>`}
+            </div>
 
             ${slotId === 'voice_tts' ? `<div class="form-field" id="secondary-tts-voice-container-${slotId}" style="${secondaryPreset && secondaryPreset.id !== 'android_native_tts' ? '' : 'display:none;'}">
               <label class="form-label" for="secondary-custom-voice-${slotId}">API 2 voice (choose from the available list or enter a custom name)</label>
               <input type="text" class="form-input" id="secondary-custom-voice-${slotId}" value="${escapeHtml(slotCfg.secondary?.customTtsVoice ?? '')}" placeholder="${secondaryPreset?.id === 'freetts_tts' ? 'en-US-JennyNeural' : secondaryPreset?.id === 'groq_tts' ? 'troy' : 'Choose or enter a voice name'}" autocomplete="off" />
               <div class="voice-picker-dropdown">
-                <div class="btn-row">${secondaryPreset?.id === 'groq_tts' || secondaryPreset?.id === 'freetts_tts' ? '' : `<button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-secondary-voices-btn-${slotId}">Load available voices</button>`}<button type="button" class="btn btn-secondary" id="preview-secondary-voice-btn-${slotId}">Preview voice</button></div>
+                <div class="btn-row"><button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-secondary-voices-btn-${slotId}" style="${secondaryPreset?.id === 'groq_tts' || secondaryPreset?.id === 'freetts_tts' ? 'display:none;' : ''}">Load available voices</button><button type="button" class="btn btn-secondary" id="preview-secondary-voice-btn-${slotId}">Preview voice</button></div>
                 <div class="model-picker-options" id="secondary-voices-list-${slotId}" hidden></div>
                 <div id="preview-secondary-voice-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
                 <div id="fetch-secondary-voices-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
@@ -1800,6 +1800,19 @@ ${secondaryPreset?.id === 'freetts_tts' ? '' : `            <div class="form-fie
         option.classList.toggle('active', option.dataset.providerId === selected.id);
       });
       closeProviderPicker();
+      const modelField = modelInput?.closest<HTMLElement>('.form-field');
+      if (modelField) modelField.style.display = selected.id === 'freetts_tts' ? 'none' : '';
+      if (baseUrlInput && selected.id !== configs[slotId].providerId) baseUrlInput.value = selected.defaultBaseUrl;
+      if (modelInput && selected.id !== configs[slotId].providerId) modelInput.value = selected.defaultModelOrVoice;
+      const voiceContainer = container.querySelector<HTMLElement>(`#tts-voice-container-${slotId}`);
+      if (voiceContainer) voiceContainer.style.display = selected.id === 'android_native_tts' ? 'none' : '';
+      const fetchVoices = container.querySelector<HTMLButtonElement>(`#fetch-voices-btn-${slotId}`);
+      if (fetchVoices) fetchVoices.style.display = selected.id === 'groq_tts' || selected.id === 'freetts_tts' ? 'none' : '';
+      const voiceInput = container.querySelector<HTMLInputElement>(`#custom-voice-${slotId}`);
+      if (voiceInput) {
+        voiceInput.value = '';
+        voiceInput.placeholder = selected.id === 'freetts_tts' ? 'en-US-JennyNeural' : selected.id === 'groq_tts' ? 'troy' : 'Choose or enter a voice name';
+      }
     });
 
     const renderModelOptions = (models: string[]): void => {
@@ -2252,6 +2265,11 @@ ${secondaryPreset?.id === 'freetts_tts' ? '' : `            <div class="form-fie
       }
       const selectedPreset = getPreset(slotId, selected);
       renderSecondaryModelOptions(selectedPreset.modelSuggestions || [selectedPreset.defaultModelOrVoice]);
+      const secondaryModelField = container.querySelector<HTMLElement>(`#secondary-model-field-${slotId}`);
+      if (secondaryModelField) secondaryModelField.style.display = selectedPreset.id === 'freetts_tts' ? 'none' : '';
+      if (fetchSecondaryModelsBtn) fetchSecondaryModelsBtn.style.display = selectedPreset.id === 'freetts_tts' ? 'none' : '';
+      const secondaryFetchVoices = container.querySelector<HTMLButtonElement>(`#fetch-secondary-voices-btn-${slotId}`);
+      if (secondaryFetchVoices) secondaryFetchVoices.style.display = selectedPreset.id === 'groq_tts' || selectedPreset.id === 'freetts_tts' ? 'none' : '';
       const secondaryCustomAuthContainer = container.querySelector<HTMLElement>(`#secondary-custom-auth-container-${slotId}`);
       if (secondaryCustomAuthContainer) secondaryCustomAuthContainer.style.display = selectedPreset.id.startsWith('custom_openai_') ? '' : 'none';
       if (secondaryKeyInput) secondaryKeyInput.disabled = !selectedPreset.requiresKey;
