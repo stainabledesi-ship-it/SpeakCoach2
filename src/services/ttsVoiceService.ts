@@ -28,8 +28,6 @@ const OPENAI_PREBUILT_VOICES = [
   'alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'onyx',
   'nova', 'sage', 'shimmer', 'verse', 'marin', 'cedar'
 ];
-const GROQ_ENGLISH_VOICES = ['autumn', 'diana', 'hannah', 'austin', 'daniel', 'troy'];
-const GROQ_ARABIC_VOICES = ['abdullah', 'fahad', 'sultan', 'lulwa', 'noura', 'aisha'];
 
 const AZURE_COMMON_VOICES = [
   'en-US-JennyNeural', 'en-US-GuyNeural', 'en-US-AriaNeural',
@@ -51,7 +49,6 @@ export function getBuiltInTtsVoices(providerId: string): TtsVoiceOption[] {
   if (providerId === 'gemini_tts') return asOptions(GEMINI_PREBUILT_VOICES);
   if (providerId === 'openai_tts') return asOptions(OPENAI_PREBUILT_VOICES);
   if (providerId === 'custom_openai_tts') return asOptions(OPENAI_PREBUILT_VOICES);
-  if (providerId === 'groq_tts') return asOptions([...GROQ_ENGLISH_VOICES, ...GROQ_ARABIC_VOICES]);
   if (providerId === 'azure_tts') return asOptions(AZURE_COMMON_VOICES);
   if (providerId === 'android_native_tts') return asOptions(['en-US', 'en-GB', 'en-AU', 'en-IN']);
   return [];
@@ -66,7 +63,7 @@ export async function fetchAvailableTtsVoices(
 
   // Gemini and OpenAI expose fixed prebuilt voice sets rather than a voice-list
   // endpoint. Keep these catalogues local and do not make a paid API call.
-  if (providerId === 'gemini_tts' || providerId === 'openai_tts' || providerId === 'custom_openai_tts' || providerId === 'groq_tts') {
+  if (providerId === 'gemini_tts' || providerId === 'openai_tts' || providerId === 'custom_openai_tts') {
     const voices = getBuiltInTtsVoices(providerId);
     const isCustom = providerId === 'custom_openai_tts' && normalizeBaseUrl(config.baseUrl) !== 'https://api.openai.com/v1';
     return {
@@ -78,7 +75,7 @@ export async function fetchAvailableTtsVoices(
     };
   }
 
-  if (providerId !== 'azure_tts' && providerId !== 'elevenlabs_tts' && providerId !== 'freetts_tts') {
+  if (providerId !== 'azure_tts' && providerId !== 'elevenlabs_tts') {
     return {
       voices: getBuiltInTtsVoices(providerId),
       source: 'built-in',
@@ -91,13 +88,12 @@ export async function fetchAvailableTtsVoices(
   if (!apiKey.trim()) throw new Error('Enter and save the API key before loading this provider’s voices.');
 
   const isAzure = providerId === 'azure_tts';
-  const isFreeTts = providerId === 'freetts_tts';
   const url = isAzure
     ? `${baseUrl}/cognitiveservices/voices/list`
-    : isFreeTts ? `${baseUrl}/api/voices` : `${baseUrl}/voices`;
+    : `${baseUrl}/voices`;
   const headers: Record<string, string> = isAzure
     ? { 'Ocp-Apim-Subscription-Key': apiKey.trim() }
-    : isFreeTts ? { 'x-api-key': apiKey.trim() } : { 'xi-api-key': apiKey.trim() };
+    : { 'xi-api-key': apiKey.trim() };
 
   const response = await nativeHttpRequest<unknown>({
     url,
@@ -116,13 +112,6 @@ export async function fetchAvailableTtsVoices(
         value: voice.ShortName.trim(),
         label: [voice.DisplayName, voice.Locale, voice.Gender].filter(Boolean).join(' · ') || voice.ShortName.trim()
       }));
-  } else if (isFreeTts && Array.isArray(payload)) {
-    voices = payload
-      .filter((item: any) => typeof item?.ShortName === 'string' && item.ShortName.trim())
-      .map((item: any) => ({
-        value: item.ShortName.trim(),
-        label: [item.FriendlyName || item.DisplayName, item.Locale, item.Gender].filter(Boolean).join(' · ') || item.ShortName.trim()
-      }));
   } else if (!isAzure && Array.isArray(payload?.voices)) {
     voices = payload.voices
       .filter((voice: any) => typeof voice?.voice_id === 'string' && voice.voice_id.trim())
@@ -137,12 +126,12 @@ export async function fetchAvailableTtsVoices(
   if (voices.length === 0) {
     throw new Error(isAzure
       ? 'Azure returned no voices. Check the region, key and endpoint.'
-      : isFreeTts ? 'FreeTTS returned no voices. Check the API key and /api/voices endpoint.' : 'ElevenLabs returned no voices. Check the API key and account access.');
+      : 'ElevenLabs returned no voices. Check the API key and account access.');
   }
 
   return {
     voices,
     source: 'provider',
-    message: `Loaded ${voices.length} voices from ${isAzure ? 'Azure' : isFreeTts ? 'FreeTTS' : 'ElevenLabs'}.`
+    message: `Loaded ${voices.length} voices from ${isAzure ? 'Azure' : 'ElevenLabs'}.`
   };
 }

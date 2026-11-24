@@ -566,25 +566,112 @@ export async function testSlotConnection(
     // -------------------------------------------------------------------------
     else if (slotConfig.slotId === 'voice_tts') {
       currentStep = 'HTTP Request';
-      // Use the same provider-specific synthesis implementation as Preview and
-      // playback. A separate probe used to send MP3 to Groq (WAV only) and the
-      // OpenAI endpoint to FreeTTS, so valid credentials could never be saved.
-      const synthRes = await synthesizeOnlineNeuralAudio(
-        'Hello from SpeakCoach.',
-        slotConfig,
-        apiKey,
-        1.0,
-        options?.transport,
-        'en-US',
-        false,
-        undefined,
-        true,
-        45000
-      );
-      if (synthRes.fromCache) {
-        throw new Error('Connection test must make a live network request; cached TTS audio cannot verify provider connectivity.');
+      const testPhrase = 'Hello from SpeakCoach.';
+      let dataUrl = '';
+
+      if (preset.id === 'gemini_tts') {
+        const synthRes = await synthesizeOnlineNeuralAudio(
+          testPhrase,
+          slotConfig,
+          apiKey,
+          1.0,
+          options?.transport,
+          'en-US',
+          false,
+          undefined,
+          true,
+          45000
+        );
+        if (synthRes.fromCache) {
+          throw new Error('Connection test must make a live network request; cached TTS audio cannot verify provider connectivity.');
+        }
+        dataUrl = synthRes.dataUrl;
+      } else if (preset.id === 'azure_tts') {
+        const voiceName = (slotConfig.modelOrVoice || preset.defaultModelOrVoice).trim();
+        const ssml = `<speak version='1.0' xml:lang='en-US'><voice name='${voiceName}'>${testPhrase}</voice></speak>`;
+
+        const res = await nativeHttpRequest<string>(
+          {
+            url: `${baseUrl}/cognitiveservices/v1`,
+            method: 'POST',
+            headers: {
+              'Ocp-Apim-Subscription-Key': apiKey,
+              'Content-Type': 'application/ssml+xml',
+              'X-Microsoft-OutputFormat': 'audio-16khz-64kbitrate-mono-mp3'
+            },
+            data: ssml,
+            responseType: 'blob',
+            timeoutMs: 12000,
+            maxRetries: 1
+          },
+          options?.transport
+        );
+        dataUrl = normalizeAudioDataUrl(res.data);
+      } else if (preset.id === 'elevenlabs_tts') {
+        const [voiceIdPart, modelIdPart] = (slotConfig.modelOrVoice || preset.defaultModelOrVoice).split(':');
+        const voiceId = voiceIdPart?.trim() || preset.defaultModelOrVoice;
+        const modelId = modelIdPart?.trim() || 'eleven_multilingual_v2';
+
+        const res = await nativeHttpRequest<string>(
+          {
+            url: `${baseUrl}/text-to-speech/${encodeURIComponent(voiceId)}`,
+            method: 'POST',
+            headers: {
+              'xi-api-key': apiKey,
+              'Content-Type': 'application/json',
+              Accept: 'audio/mpeg'
+            },
+            data: { text: testPhrase, model_id: modelId },
+            responseType: 'blob',
+            timeoutMs: 12000,
+            maxRetries: 1
+          },
+          options?.transport
+        );
+        dataUrl = normalizeAudioDataUrl(res.data);
+      } else {
+        // OpenAI TTS / Custom OpenAI-compatible TTS
+        let model = 'tts-1';
+        let voice = slotConfig.customTtsVoice?.trim() || 'alloy';
+
+        if (slotConfig.modelOrVoice.includes(':')) {
+          const [modelPart, voicePart] = slotConfig.modelOrVoice.split(':');
+          model = modelPart?.trim() || 'tts-1';
+          voice = slotConfig.customTtsVoice?.trim() || voicePart?.trim() || 'alloy';
+        } else if (slotConfig.modelOrVoice.trim()) {
+          model = slotConfig.modelOrVoice.trim();
+        }
+
+        const prepared = buildCustomEndpointRequest({
+          baseUrl,
+          defaultPath: '/audio/speech',
+          apiKey,
+          slotConfig,
+          defaultHeaders: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const res = await nativeHttpRequest<string>(
+          {
+            url: prepared.url,
+            method: 'POST',
+            headers: prepared.headers,
+            data: {
+              model,
+              voice,
+              input: testPhrase,
+              response_format: 'mp3'
+            },
+            responseType: 'blob',
+            timeoutMs: 12000,
+            maxRetries: 1
+          },
+          options?.transport
+        );
+        dataUrl = normalizeAudioDataUrl(res.data);
       }
-      const dataUrl = synthRes.dataUrl;
+
       currentStep = 'Audio Synthesis Validation';
       if (!dataUrl || !dataUrl.startsWith('data:audio/') || dataUrl.length < 30) {
         throw new Error('TTS returned empty or invalid audio data URL');
