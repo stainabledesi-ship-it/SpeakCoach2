@@ -4388,11 +4388,12 @@ body {
 }
 
 
-/* Follow the IELTS page's flat canvas: no nested dark panel around Shadowing. */
+/* The page root carries both classes on the same element (not nested).
+   Keep it transparent so the viewport canvas remains visually continuous. */
 [data-page="shadowing"] .shadowing-main-card,
-.shadowing-page .shadowing-main-card {
+.shadowing-page.shadowing-main-card {
   background: transparent !important;
-  border-color: transparent !important;
+  border: 0 !important;
   box-shadow: none !important;
 }
 .shadowing-page .sh-sentence-set-heading h2 { font-size: 1.12rem; }
