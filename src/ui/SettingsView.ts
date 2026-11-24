@@ -329,7 +329,7 @@ export async function renderSettingsView(
                 <span>${escapeHtml(preset.name)}</span><span class="provider-picker-chevron">⌄</span>
               </button>
               <div class="provider-picker-options" id="provider-options-${slotId}" hidden>
-                <p class="card-subtitle provider-picker-help">After selecting a provider and adding its API key, tap <strong>Test API 1</strong> below. Wait for a successful result before using online features. Test API 2 separately for a secondary provider.</p>
+                <details class="settings-info-help"><summary aria-label="Provider setup information">i</summary><p>After selecting a provider and adding its API key, tap <strong>Test API 1</strong> below. Wait for a successful result before using online features. Test API 2 separately for a secondary provider.</p></details>
                 ${def.providers.map((p) => `<button type="button" class="provider-picker-option ${p.id === preset.id ? 'active' : ''}" data-provider-id="${escapeHtml(p.id)}" ${((slotId === 'llm_evaluator' || slotId === 'llm_translation') && p.tier === 3) ? 'disabled' : ''}>${escapeHtml(p.name)}</button>`).join('')}
               </div>
             </div>
@@ -378,14 +378,14 @@ export async function renderSettingsView(
             />
             ${preset.requiresKey && copyKeyOptionsHtml ? `
               <div class="settings-copy-key-field">
-                <label class="form-label" for="copy-key-source-${slotId}">Or copy from</label>
+                
                 <select class="form-select provider-native-select" id="copy-key-source-${slotId}" aria-hidden="true" tabindex="-1">${copyKeyOptionsHtml}</select>
                 <div class="settings-copy-key">
                   <div class="provider-picker copy-key-provider-picker" id="copy-key-picker-${slotId}">
                     <button type="button" class="provider-picker-trigger" id="copy-key-trigger-${slotId}" aria-expanded="false"><span>${escapeHtml(copyKeySources[0]?.label ?? 'Choose source')}</span><span class="provider-picker-chevron">⌄</span></button>
                     <div class="provider-picker-options" id="copy-key-options-${slotId}" hidden>${copyKeyPickerOptionsHtml}</div>
                   </div>
-                  <button type="button" class="btn btn-secondary settings-copy-key-btn" id="copy-key-btn-${slotId}">Copy API key</button>
+                  <button type="button" class="btn btn-secondary settings-copy-key-btn" id="copy-key-btn-${slotId}">Or copy API key</button>
                 </div>
               </div>` : ''}
           </div>
@@ -428,7 +428,7 @@ export async function renderSettingsView(
               ? `<div class="form-field" id="tts-voice-container-${slotId}" style="${showVoiceInput ? '' : 'display: none;'}">
                   <label class="form-label" for="custom-voice-${slotId}">Voice (choose from the available list or enter a custom name)</label>
                   <input type="text" class="form-input" id="custom-voice-${slotId}" value="${escapeHtml(slotCfg.customTtsVoice ?? '')}" placeholder="${preset.id === 'freetts_tts' ? 'en-US-JennyNeural' : preset.id === 'groq_tts' ? 'troy' : 'Choose or enter a voice name'}" autocomplete="off" />
-                  ${preset.id === 'groq_tts' ? '<p class="card-subtitle">English voices: troy, hannah, autumn, diana, austin, daniel. Arabic Saudi voices: fahad, abdullah, sultan, lulwa, noura, aisha. Orpheus accepts up to 200 characters per request.</p>' : ''}
+                  ${preset.id === 'groq_tts' ? '<details class="settings-info-help"><summary aria-label="Groq voice information">i</summary><p>English voices: troy, hannah, autumn, diana, austin, daniel. Arabic Saudi voices: fahad, abdullah, sultan, lulwa, noura, aisha. Orpheus accepts up to 200 characters per request.</p></details>' : ''}
                   <div class="voice-picker-dropdown">
                     <div class="btn-row"><button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-voices-btn-${slotId}" >Load available voices</button><button type="button" class="btn btn-secondary" id="preview-voice-btn-${slotId}">Preview voice</button></div>
                     <div class="model-picker-options" id="voices-list-${slotId}" hidden></div>
@@ -497,7 +497,7 @@ export async function renderSettingsView(
             </label>
           </div>
           <div class="secondary-api-content" id="secondary-api-content-${slotId}" ${slotCfg.secondary ? '' : 'hidden'}>
-          <p class="card-subtitle secondary-api-help">Configure another provider/account and key. Speech recognition may rotate between verified APIs. API 2 is not guaranteed to be a different model or service: if you use the same gateway, model, or endpoint in both accounts, you may have no independent fallback. Check that each account supports the required operation (TTS: text → audio; STT: audio → text).</p>
+          <details class="settings-info-help"><summary aria-label="API 2 setup information">i</summary><p>Configure another provider/account and key. Speech recognition may rotate between verified APIs. API 2 is not guaranteed to be a different model or service: if you use the same gateway, model, or endpoint in both accounts, you may have no independent fallback. Check that each account supports the required operation (TTS: text → audio; STT: audio → text).</p></details>
           ${secondarySameModelAsPrimary ? `<div class="status-box info" role="note"><strong>API 2 uses the same provider and model as API 1.</strong> It may still have a separate key or quota, but it is not a different model or an independent model capability.</div>` : ''}
           <div class="form-grid">
             <div class="form-field"><label class="form-label" for="secondary-provider-${slotId}">Provider</label>
@@ -528,7 +528,7 @@ export async function renderSettingsView(
                 <button type="button" class="btn btn-secondary settings-fetch-models-btn" id="fetch-secondary-models-btn-${slotId}">Fetch models</button>
               </div>
               <input type="text" class="form-input" id="secondary-model-${slotId}" value="${escapeHtml(slotCfg.secondary?.modelOrVoice ?? '')}" placeholder="${escapeHtml(secondaryPreset?.defaultModelOrVoice ?? 'Model name')}" />
-              ${secondaryIsCustom ? `<p class="card-subtitle">Custom API 2 model ID is free text; suggestions do not limit what you can enter. Use the exact ID and audio endpoint supported by that gateway.</p>` : ''}
+              ${secondaryIsCustom ? `<details class="settings-info-help"><summary aria-label="Custom API 2 model information">i</summary><p>Custom API 2 model ID is free text; suggestions do not limit what you can enter. Use the exact ID and audio endpoint supported by that gateway.</p></details>` : ''}
               <div class="model-picker-dropdown"><button type="button" class="model-picker-trigger" aria-expanded="false">Browse available models</button><div class="model-picker-options" id="secondary-models-list-${slotId}" hidden>${secondarySuggestions.map((model) => `<button type="button" class="model-option" data-model-value="${escapeHtml(model)}">${escapeHtml(model)}</button>`).join("")}</div></div><div id="fetch-secondary-models-msg-${slotId}" class="settings-fetch-models-message" role="status" aria-live="polite" hidden></div>
             </div>
 
@@ -544,17 +544,16 @@ export async function renderSettingsView(
             </div>` : ''}
 
             ${secondaryCopyKeyOptionsHtml ? `
-            <div class="form-field">
-              <label class="form-label" for="secondary-copy-key-source-${slotId}">Or copy from</label>
+            <div class="settings-copy-key-field">
               <div class="settings-copy-key">
                 <select class="form-select provider-native-select" id="secondary-copy-key-source-${slotId}" aria-hidden="true" tabindex="-1">${secondaryCopyKeyOptionsHtml}</select>
                 <div class="provider-picker copy-key-provider-picker" id="secondary-copy-key-picker-${slotId}">
                   <button type="button" class="provider-picker-trigger" id="secondary-copy-key-trigger-${slotId}" aria-expanded="false"><span>${escapeHtml(secondaryCopyKeySources[0]?.label ?? 'Choose source')}</span><span class="provider-picker-chevron">⌄</span></button>
                   <div class="provider-picker-options" id="secondary-copy-key-options-${slotId}" hidden>${secondaryCopyKeyPickerOptionsHtml}</div>
                 </div>
-                <button type="button" class="btn btn-secondary settings-copy-key-btn" id="secondary-copy-key-btn-${slotId}">Copy API key</button>
+                <button type="button" class="btn btn-secondary settings-copy-key-btn" id="secondary-copy-key-btn-${slotId}">Or copy API key</button>
               </div>
-              <p class="card-subtitle">You can copy an API 1 or API 2 key from another capability slot.</p>
+              
             </div>` : ''}
             <details class="advanced-provider-settings" id="secondary-custom-auth-container-${slotId}" style="${secondaryIsCustom ? '' : 'display:none;'}">
               <summary>Advanced authentication & endpoint</summary>

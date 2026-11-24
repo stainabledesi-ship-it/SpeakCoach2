@@ -594,6 +594,7 @@ export function renderShadowingView(
       </details>` : ''}
 
 
+      <div class="sh-sentence-set-heading section-heading sh-exercise-heading"><h2 id="sh-exercise-title">Exercise</h2></div>
       <p class="card-subtitle sh-ai-sentence-count shadowing-topic-label">${state.customDrillText ? 'Weak-word drill' : `<span class="sh-topic-caption" dir="auto">Topic: ${escapeHtml(sentence?.topic ?? 'Offline practice')}</span><span class="sh-sentence-count">${hasLanguageSentenceSet ? `Sentence ${state.index + 1} of ${activeSet?.sentences.length ?? 0}` : 'No sentence set yet'}</span>`}</p>
       <div class="sentence-box" id="sh-target-text">${escapeHtml(targetText)}</div>
       <p class="card-subtitle sh-focus-copy">
