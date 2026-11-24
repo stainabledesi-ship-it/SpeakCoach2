@@ -716,6 +716,7 @@ describe('Voice TTS Service (Online Neural Caching + Offline Native Fallback)', 
     });
     expect(request.url).toBe('https://api.groq.com/openai/v1/audio/speech');
     expect(request.data).toMatchObject({ model: 'canopylabs/orpheus-v1-english', voice: 'troy', response_format: 'wav' });
+    expect(request.data).not.toHaveProperty('speed');
     expect(result.dataUrl).toBe('data:audio/wav;base64,UklGRg==');
   });
 

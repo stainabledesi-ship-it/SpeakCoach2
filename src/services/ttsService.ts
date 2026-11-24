@@ -340,7 +340,7 @@ async function synthesizeOnlineNeuralAudioUnshared(
           model,
           voice,
           input: text,
-          speed: rate,
+          ...(slotCfg.providerId === 'groq_tts' ? {} : { speed: rate }),
           response_format: slotCfg.providerId === 'groq_tts' ? 'wav' : 'mp3'
         },
         responseType: 'blob',
